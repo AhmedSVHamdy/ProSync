@@ -12,6 +12,7 @@ namespace Core.Domain.Entities
         public string PullRequestUrl { get; set; } = string.Empty;
         public int Priority { get; set; }
         public DateTime LastActivityAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public Guid ProjectId { get; set; }
         public Project Project { get; set; } = null!;

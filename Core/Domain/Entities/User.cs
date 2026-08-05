@@ -10,5 +10,10 @@ namespace Core.Domain.Entities
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public string? RefreshToken { get; set; }
+        public DateTime RefreshTokenExpirationDateTime { get; set; }
+
+        public UserSettings? UserSettings { get; set; }
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     }
 }

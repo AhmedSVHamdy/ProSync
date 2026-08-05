@@ -9,8 +9,8 @@ namespace Core.Domain.Entities
         public string Action { get; set; } = string.Empty;       
         public DateTime Timestamp { get; set; }
         public Guid UserId { get; set; }
-        public User User { get; set; } 
+        public User User { get; set; } = null!;
         public Guid TaskItemId { get; set; }    
-        public TaskItem TaskItem { get; set; } 
+        public TaskItem TaskItem { get; set; } = null!;
     }
 }
