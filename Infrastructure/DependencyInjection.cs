@@ -1,4 +1,5 @@
 ﻿using Core.Domain.RepositoryContracts;
+using Core.ServiceContracts;
 using Infrastructure.ApplicationDbContext;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +29,10 @@ namespace Infrastructure
                         errorNumbersToAdd: null);
                 });
             });
-
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ITenantProviderRepository, TenantProviderRepositories>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             return services;
         }
        

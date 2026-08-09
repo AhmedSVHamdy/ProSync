@@ -51,6 +51,11 @@ namespace Infrastructure.Configurations
                    .HasForeignKey(x => x.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasOne(n => n.TaskItem)
+                .WithMany()
+                .HasForeignKey(n => n.TaskItemId)
+                .OnDelete(DeleteBehavior.NoAction);
+
         }
     }
 }

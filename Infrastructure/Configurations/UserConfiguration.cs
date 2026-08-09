@@ -47,7 +47,12 @@ namespace Infrastructure.Configurations
             builder.HasOne(u => u.UserSettings)
                    .WithOne(u => u.User)
                    .HasForeignKey<UserSettings>(u => u.UserId)
-                   .OnDelete(DeleteBehavior.Cascade); // لو اتحذف اليوزر تتحذف إعداداته
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(u => u.Tenant)
+                    .WithMany()
+                    .HasForeignKey(u => u.TenantId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

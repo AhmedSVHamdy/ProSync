@@ -11,9 +11,15 @@ namespace Core.Domain.Entities
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public string? RefreshToken { get; set; }
+        public bool IsActive { get; set; } = true;
         public DateTime RefreshTokenExpirationDateTime { get; set; }
+
+        public bool IsEmailVerified { get; set; } = false;
+        public string? OtpCodeHash { get; set; }
+        public DateTime? OtpExpiresAt { get; set; }
 
         public UserSettings? UserSettings { get; set; }
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+        public Tenant Tenant { get; set; } = null!;
     }
 }

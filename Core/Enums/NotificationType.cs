@@ -6,13 +6,12 @@ namespace Core.Enums
 {
     public enum NotificationType
     {
-        Info = 0,
-        Warning = 1,
-        Success = 2,
-        Error = 3,
-        Promotional = 4,
-        System = 5,
-        NewComment = 6,
-       
+        TaskAssigned = 1,
+        TaskStatusChanged = 2,
+        MentionInComment = 3,
+        SprintClosed = 4,
+        EscalationAlert = 5,      // من الـ SLA Engine اللي اتكلمنا عليه بدري
+        PullRequestMerged = 6
+
     }
 }

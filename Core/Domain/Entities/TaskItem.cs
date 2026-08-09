@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using TaskStatus = Core.Enums.TaskStatus;
 
 namespace Core.Domain.Entities
 {
@@ -8,9 +10,9 @@ namespace Core.Domain.Entities
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;  
+        public TaskStatus Status { get; set; } 
         public string PullRequestUrl { get; set; } = string.Empty;
-        public int Priority { get; set; }
+        public TaskPriority Priority { get; set; }
         public DateTime LastActivityAt { get; set; }
         public DateTime CreatedAt { get; set; }
 
