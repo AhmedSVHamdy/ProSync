@@ -9,5 +9,6 @@ namespace Core.ServiceContracts
     public interface ITokenIssuerService
     {
         Task<AuthResponseDto> IssueTokensAsync(User user);
+        Task<Guid?> ValidateAndGetUserIdFromExpiredTokenAsync(string accessToken);
     }
 }

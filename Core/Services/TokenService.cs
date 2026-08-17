@@ -90,5 +90,6 @@ namespace Core.Services
             var userIdClaim = result.ClaimsIdentity.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
             return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
         }
+        
     }
 }

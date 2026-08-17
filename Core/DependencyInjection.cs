@@ -22,7 +22,11 @@ namespace Core
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IGoogleAuthValidator, GoogleAuthValidator>();
             services.AddScoped<IAdminUserService, AdminUserService>();
-
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITokenIssuerService, TokenIssuerService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IInvitationService, InvitationService>();
+            services.AddScoped<ITokenIssuerService, TokenIssuerService>();
 
             services.AddValidatorsFromAssemblyContaining<RegisterRequestDtoValidator>();
             services.AddAutoMapper(cfg => { }, typeof(AuthMappingProfile).Assembly);

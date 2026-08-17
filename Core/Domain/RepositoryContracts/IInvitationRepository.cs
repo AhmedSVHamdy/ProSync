@@ -9,5 +9,6 @@ namespace Core.Domain.RepositoryContracts
     public interface IInvitationRepository : IGenericRepository<Invitation>
     {
         Task<List<Invitation>> GetPendingByEmailAsync(string email);
+        Task<Invitation?> GetPendingByTokenHashAsync(string tokenHash);
     }
 }

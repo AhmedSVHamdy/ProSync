@@ -10,7 +10,7 @@ namespace Infrastructure.Configurations
 {
     public class NotificationConfiguration : TenantEntityConfiguration<Notification>
     {
-        public void Configure(EntityTypeBuilder<Notification> builder)
+        public override void Configure(EntityTypeBuilder<Notification> builder)
         {
             base.Configure(builder);
 

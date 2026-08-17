@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class ProSync : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,8 +29,8 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Status = table.Column<int>(type: "int", maxLength: 50, nullable: false),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -40,7 +40,8 @@ namespace Infrastructure.Migrations
                         name: "FK_Projects_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,7 +49,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PlanTier = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PlanTier = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     MaxEmployees = table.Column<int>(type: "int", nullable: false),
                     GitHubEnabled = table.Column<bool>(type: "bit", nullable: false),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
@@ -60,30 +61,34 @@ namespace Infrastructure.Migrations
                         name: "FK_Subscriptions_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RefreshTokenExpirationDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsEmailVerified = table.Column<bool>(type: "bit", nullable: false),
+                    OtpCodeHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OtpExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Tenants_TenantId",
+                        name: "FK_users_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -91,7 +96,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsClosed = table.Column<bool>(type: "bit", nullable: false),
@@ -110,37 +115,58 @@ namespace Infrastructure.Migrations
                         name: "FK_Sprints_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Notifications",
+                name: "Invitations",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    ReferenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Payload = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GroupKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Role = table.Column<int>(type: "int", nullable: false),
+                    TokenHash = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    InvitedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.PrimaryKey("PK_Invitations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notifications_Tenants_TenantId",
+                        name: "FK_Invitations_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Notifications_Users_UserId",
+                        name: "FK_Invitations_users_InvitedByUserId",
+                        column: x => x.InvitedByUserId,
+                        principalTable: "users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TokenHash = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id");
                 });
 
@@ -150,8 +176,8 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EmailNotifications = table.Column<bool>(type: "bit", nullable: false),
-                    NotificationsEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    EmailNotifications = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    NotificationsEnabled = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -161,11 +187,12 @@ namespace Infrastructure.Migrations
                         name: "FK_UserSettings_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserSettings_Users_UserId",
+                        name: "FK_UserSettings_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id");
                 });
 
@@ -174,10 +201,10 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PullRequestUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    Status = table.Column<int>(type: "int", maxLength: 50, nullable: false),
+                    PullRequestUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Priority = table.Column<int>(type: "int", nullable: false),
                     LastActivityAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -193,22 +220,26 @@ namespace Infrastructure.Migrations
                         name: "FK_TaskItems_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_TaskItems_Sprints_SprintId",
                         column: x => x.SprintId,
                         principalTable: "Sprints",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_TaskItems_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TaskItems_Users_AssigneeId",
+                        name: "FK_TaskItems_users_AssigneeId",
                         column: x => x.AssigneeId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,7 +247,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Action = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TaskItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -234,11 +265,50 @@ namespace Infrastructure.Migrations
                         name: "FK_AuditLogs_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AuditLogs_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ReferenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Payload = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GroupKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TaskItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_TaskItems_TaskItemId",
+                        column: x => x.TaskItemId,
+                        principalTable: "TaskItems",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_AuditLogs_Users_UserId",
+                        name: "FK_Notifications_Tenants_TenantId",
+                        column: x => x.TenantId,
+                        principalTable: "Tenants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Notifications_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id");
                 });
 
@@ -258,6 +328,26 @@ namespace Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Invitations_InvitedByUserId",
+                table: "Invitations",
+                column: "InvitedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_TenantId",
+                table: "Invitations",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_TokenHash",
+                table: "Invitations",
+                column: "TokenHash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_TaskItemId",
+                table: "Notifications",
+                column: "TaskItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notifications_TenantId",
                 table: "Notifications",
                 column: "TenantId");
@@ -273,6 +363,16 @@ namespace Infrastructure.Migrations
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_TokenHash",
+                table: "RefreshTokens",
+                column: "TokenHash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sprints_ProjectId",
                 table: "Sprints",
                 column: "ProjectId");
@@ -285,7 +385,8 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Subscriptions_TenantId",
                 table: "Subscriptions",
-                column: "TenantId");
+                column: "TenantId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskItems_AssigneeId",
@@ -308,9 +409,10 @@ namespace Infrastructure.Migrations
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_TenantId",
-                table: "Users",
-                column: "TenantId");
+                name: "IX_users_TenantId_Email",
+                table: "users",
+                columns: new[] { "TenantId", "Email" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSettings_TenantId",
@@ -331,7 +433,13 @@ namespace Infrastructure.Migrations
                 name: "AuditLogs");
 
             migrationBuilder.DropTable(
+                name: "Invitations");
+
+            migrationBuilder.DropTable(
                 name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");
@@ -346,7 +454,7 @@ namespace Infrastructure.Migrations
                 name: "Sprints");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "users");
 
             migrationBuilder.DropTable(
                 name: "Projects");

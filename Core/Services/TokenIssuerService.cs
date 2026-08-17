@@ -54,5 +54,9 @@ namespace Core.Services
                 Role = user.Role
             };
         }
+        public async Task<Guid?> ValidateAndGetUserIdFromExpiredTokenAsync(string accessToken)
+        {
+            return await _tokenService.ValidateAndGetUserIdFromExpiredTokenAsync(accessToken);
+        }
     }
 }

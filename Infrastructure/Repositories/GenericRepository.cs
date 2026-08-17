@@ -1,4 +1,5 @@
 ﻿using Core.Domain.Entities;
+using Core.Domain.RepositoryContracts;
 using Core.ServiceContracts;
 using Infrastructure.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;

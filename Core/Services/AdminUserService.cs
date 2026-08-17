@@ -1,4 +1,5 @@
-﻿using Core.Domain.Entities;
+﻿using AutoMapper;
+using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
 using Core.DTO;
 using Core.Enums;
@@ -12,10 +13,12 @@ namespace Core.Services
     public class AdminUserService : IAdminUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public AdminUserService(IUserRepository userRepository)
+        public AdminUserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<UserProfileResponseDto>> GetAllUsersInTenantAsync(Guid adminUserId)
@@ -25,15 +28,7 @@ namespace Core.Services
 
             var users = await _userRepository.GetAllByTenantIdAsync(admin.TenantId);
 
-            return users.Select(u => new UserProfileResponseDto
-            {
-                Id = u.Id,
-                Name = u.Name,
-                Email = u.Email,
-                Role = u.Role,
-                TenantId = u.TenantId,
-                IsEmailVerified = u.IsEmailVerified
-            }).ToList();
+            return _mapper.Map<List<UserProfileResponseDto>>(users);
         }
 
         public async Task DeactivateUserAsync(Guid adminUserId, Guid targetUserId)

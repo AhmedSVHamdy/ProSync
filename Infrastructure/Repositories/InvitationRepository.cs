@@ -19,5 +19,10 @@ namespace Infrastructure.Repositories
                 .Where(i => i.Email == email && !i.IsAccepted && i.ExpiresAt > DateTime.UtcNow)
                 .ToListAsync();
         }
+        public async Task<Invitation?> GetPendingByTokenHashAsync(string tokenHash)
+        {
+            return await _dbSet
+                .FirstOrDefaultAsync(i => i.TokenHash == tokenHash && !i.IsAccepted && i.ExpiresAt > DateTime.UtcNow);
+        }
     }
 }

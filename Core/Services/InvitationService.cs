@@ -1,12 +1,13 @@
 ﻿using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
 using Core.DTO;
+using Core.Helpers;
 using Core.ServiceContracts;
 using Core.ServiceContracts.Core.Application.Contracts.Services;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Security.Cryptography;
+using static Core.Services.TokenService;
 
 namespace Core.Services
 {
@@ -15,23 +16,23 @@ namespace Core.Services
         private readonly IInvitationRepository _invitationRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
+        private readonly ITokenIssuerService _tokenIssuerService;
         private readonly IConfiguration _configuration;
 
         public InvitationService(
             IInvitationRepository invitationRepository,
             IUserRepository userRepository,
             IPasswordHasher passwordHasher,
-            ITokenService tokenService,
             IEmailService emailService,
+            ITokenIssuerService tokenIssuerService,
             IConfiguration configuration)
         {
             _invitationRepository = invitationRepository;
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
-            _tokenService = tokenService;
             _emailService = emailService;
+            _tokenIssuerService = tokenIssuerService;
             _configuration = configuration;
         }
 
@@ -44,7 +45,8 @@ namespace Core.Services
             if (existingUser is not null)
                 throw new InvalidOperationException("هذا البريد الإلكتروني مسجل بالفعل.");
 
-            var (rawToken, tokenHash) = _tokenService.GenerateRefreshToken();   // نفس آلية توليد التوكن العشوائي، مفيش داعي نكرر الكود
+            var rawToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+            var tokenHash = TokenHasher.HashDeterministic(rawToken);
 
             var invitation = new Invitation
             {
@@ -69,58 +71,28 @@ namespace Core.Services
 
         public async Task<AuthResponseDto> AcceptInvitationAsync(AcceptInvitationRequestDto dto)
         {
-            var invitations = await _invitationRepository.GetPendingByEmailAsync(dto.Email);   // List من الدعوات المعلقة لنفس الإيميل (ممكن يكون مدعو أكتر من مرة)
+            var tokenHash = TokenHasher.HashDeterministic(dto.Token);
 
-            Invitation? matchedInvitation = null;
-            foreach (var invitation in invitations)
-            {
-                if (_passwordHasher.Verify(dto.Token, invitation.TokenHash))
-                {
-                    matchedInvitation = invitation;
-                    break;
-                }
-            }
-
-            if (matchedInvitation is null || matchedInvitation.ExpiresAt < DateTime.UtcNow)
-                throw new InvalidOperationException("الدعوة غير صالحة أو منتهية الصلاحية.");
+            var invitation = await _invitationRepository.GetPendingByTokenHashAsync(tokenHash)
+                ?? throw new InvalidOperationException("الدعوة غير صالحة أو منتهية الصلاحية.");
 
             var newUser = new User
             {
                 Id = Guid.NewGuid(),
-                TenantId = matchedInvitation.TenantId,
+                TenantId = invitation.TenantId,
                 Name = dto.Name,
-                Email = matchedInvitation.Email,
+                Email = invitation.Email,
                 PasswordHash = _passwordHasher.Hash(dto.Password),
-                Role = matchedInvitation.Role.ToString(),
-                IsEmailVerified = true   // زي ما اتفقنا، مؤكد ضمنياً لأنه رد على دعوة بريدية
+                Role = invitation.Role.ToString(),
+                IsEmailVerified = true
             };
 
-            await _userRepository.AddAsync(newUser);   // دلوقتي AddAsync عادية كفاية، مفيش Tenant جديد هنا زي Register
+            await _userRepository.AddAsync(newUser);
 
-            matchedInvitation.IsAccepted = true;
-            await _invitationRepository.UpdateAsync(matchedInvitation);
+            invitation.IsAccepted = true;
+            await _invitationRepository.UpdateAsync(invitation);
 
-            return await GenerateAuthResponseForNewUserAsync(newUser);   // Method مساعدة، هنشرحها تحت
-        }
-
-        // Method خاصة تكرر نفس منطق GenerateAuthResponseAsync في AuthService
-        // (ملحوظة تصميمية مهمة أوضحها تحت)
-        private async Task<AuthResponseDto> GenerateAuthResponseForNewUserAsync(User user)
-        {
-            var accessToken = _tokenService.GenerateAccessToken(user);
-            var (rawRefreshToken, refreshTokenHash) = _tokenService.GenerateRefreshToken();
-
-            var refreshTokenDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"]!);
-
-            // هنا محتاجين IRefreshTokenRepository كمان في الكونستركتور، هنضيفها
-            return new AuthResponseDto
-            {
-                AccessToken = accessToken,
-                RefreshToken = rawRefreshToken,
-                UserName = user.Name,
-                Email = user.Email,
-                Role = user.Role
-            };
+            return await _tokenIssuerService.IssueTokensAsync(newUser);
         }
     }
 }

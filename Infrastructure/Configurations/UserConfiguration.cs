@@ -10,15 +10,13 @@ namespace Infrastructure.Configurations
 {
     public class UserConfiguration : TenantEntityConfiguration<User>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public override void Configure(EntityTypeBuilder<User> builder)
         {
             base.Configure(builder);
 
             builder.ToTable("users");
 
-
-            builder.HasIndex(u => new { u.TenantId, u.Email })
-                .IsUnique();
+            builder.HasIndex(u => u.Email).IsUnique();   // فريد عالمياً، من غير TenantId
 
             builder.Property(u => u.PasswordHash)
            .IsRequired();
@@ -35,25 +33,18 @@ namespace Infrastructure.Configurations
               .IsRequired()
               .HasMaxLength(50);
 
-           
-            builder.Property(u => u.RefreshToken)
-                  .HasMaxLength(500)
-                  .IsRequired(false);
-
-            builder.Property(u => u.RefreshTokenExpirationDateTime)
-                   .IsRequired(true);
-
 
             builder.HasOne(u => u.UserSettings)
                    .WithOne(u => u.User)
                    .HasForeignKey<UserSettings>(u => u.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(u => u.Tenant)
-                    .WithMany()
-                    .HasForeignKey(u => u.TenantId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
+        }
+        protected override void ConfigureTenantRelation(EntityTypeBuilder<User> builder)
+        {
+            builder.HasOne(u => u.Tenant)   // ← النسخة اللي بتستخدم الـ Navigation Property الحقيقية
+                .WithMany()
+                .HasForeignKey(u => u.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Infrastructure.Configurations
 {
     public class SubscriptionConfiguration : TenantEntityConfiguration<Subscription>
     {
-        public void Configure(EntityTypeBuilder<Subscription> builder)
+        public override void Configure(EntityTypeBuilder<Subscription> builder)
         {
             base.Configure(builder);
 

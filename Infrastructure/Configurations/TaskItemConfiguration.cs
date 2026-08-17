@@ -10,8 +10,9 @@ namespace Infrastructure.Configurations
 {
     public class TaskItemConfiguration : TenantEntityConfiguration<TaskItem>
     {
-        public void Configure(EntityTypeBuilder<TaskItem> builder)
+        public override void Configure(EntityTypeBuilder<TaskItem> builder)
         {
+            base.Configure(builder);
             builder.ToTable("TaskItems");
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Title)

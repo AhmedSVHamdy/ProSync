@@ -1,5 +1,6 @@
 ﻿using Core.Domain.RepositoryContracts;
 using Core.ServiceContracts;
+using Core.Services;
 using Infrastructure.ApplicationDbContext;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,7 @@ namespace Infrastructure
             services.AddScoped<ITenantProviderRepository, TenantProviderRepositories>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<IInvitationRepository, InvitationRepository>();
             return services;
         }
        

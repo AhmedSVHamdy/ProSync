@@ -10,7 +10,7 @@ namespace Infrastructure.Configurations
 {
     public class TenantConfiguration :IEntityTypeConfiguration<Tenant>
     {
-        public void Configure(EntityTypeBuilder<Tenant> builder)
+        public  void Configure(EntityTypeBuilder<Tenant> builder)
         {
             builder.ToTable("Tenants");
             builder.HasKey(t => t.Id);

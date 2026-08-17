@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ProSyncContext))]
-    [Migration("20260806050607_Invitation")]
-    partial class Invitation
+    [Migration("20260811134832_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Action")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("TaskItemId")
                         .HasColumnType("uniqueidentifier");
@@ -55,7 +56,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AuditLogs");
+                    b.ToTable("AuditLogs", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Invitation", b =>
@@ -118,11 +119,14 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Payload")
                         .HasColumnType("nvarchar(max)");
@@ -138,10 +142,13 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -154,7 +161,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Project", b =>
@@ -165,9 +172,11 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<int>("Status")
+                        .HasMaxLength(50)
                         .HasColumnType("int");
 
                     b.Property<Guid>("TenantId")
@@ -177,7 +186,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.RefreshToken", b =>
@@ -237,7 +246,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
@@ -245,7 +255,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Sprints");
+                    b.ToTable("Sprints", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Subscription", b =>
@@ -262,16 +272,18 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("PlanTier")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("TenantId")
+                        .IsUnique();
 
-                    b.ToTable("Subscriptions");
+                    b.ToTable("Subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.TaskItem", b =>
@@ -288,7 +300,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("LastActivityAt")
                         .HasColumnType("datetime2");
@@ -301,12 +314,14 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("PullRequestUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<Guid?>("SprintId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
+                        .HasMaxLength(50)
                         .HasColumnType("int");
 
                     b.Property<Guid>("TenantId")
@@ -314,7 +329,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
@@ -326,7 +342,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("TaskItems");
+                    b.ToTable("TaskItems", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Tenant", b =>
@@ -358,14 +374,19 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsEmailVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("OtpCodeHash")
                         .HasColumnType("nvarchar(max)");
@@ -377,24 +398,20 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RefreshTokenExpirationDateTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("TenantId", "Email")
+                        .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.UserSettings", b =>
@@ -404,10 +421,14 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("EmailNotifications")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("NotificationsEnabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
@@ -422,7 +443,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserSettings");
+                    b.ToTable("UserSettings", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.AuditLog", b =>
@@ -436,7 +457,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Core.Domain.Entities.User", "User")
@@ -461,7 +482,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("InvitedBy");
@@ -471,12 +492,13 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Core.Domain.Entities.TaskItem", "TaskItem")
                         .WithMany()
-                        .HasForeignKey("TaskItemId");
+                        .HasForeignKey("TaskItemId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Core.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Core.Domain.Entities.User", "User")
@@ -495,7 +517,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -521,7 +543,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Project");
@@ -532,7 +554,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -541,23 +563,24 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Domain.Entities.User", "Assignee")
                         .WithMany()
                         .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Core.Domain.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Core.Domain.Entities.Sprint", "Sprint")
                         .WithMany()
-                        .HasForeignKey("SprintId");
+                        .HasForeignKey("SprintId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Core.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Assignee");
@@ -569,11 +592,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Domain.Entities.User", b =>
                 {
-                    b.HasOne("Core.Domain.Entities.Tenant", null)
+                    b.HasOne("Core.Domain.Entities.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.UserSettings", b =>
@@ -581,7 +606,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Core.Domain.Entities.User", "User")

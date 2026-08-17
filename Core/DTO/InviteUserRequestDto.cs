@@ -8,6 +8,7 @@ namespace Core.DTO
     public class InviteUserRequestDto
     {
         public string Email { get; set; } = string.Empty;
+        
         public UserRole Role { get; set; }
     }
     public class InvitationResponseDto

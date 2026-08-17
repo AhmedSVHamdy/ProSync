@@ -6,10 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>360cbc26-c614-4bb0-b151-359721519260</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
 		  <PrivateAssets>all</PrivateAssets>
@@ -19,10 +22,6 @@
 		<!-- شيل سطر Microsoft.OpenApi 2.9.0 مؤقتاً وجرب -->
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />

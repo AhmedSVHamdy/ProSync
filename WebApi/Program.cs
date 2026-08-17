@@ -1,7 +1,13 @@
 using Core; // 👈 1. ضيفنا دي عشان يشوف AddCoreServices
 using FluentValidation.AspNetCore;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.Reflection;
+using System.Text;
+using System.Text.Json.Serialization;
+using WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 // أ) البنية التحتية (Database, Identity, Repositories, SignalR)
@@ -20,6 +26,10 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Description = "Multi-tenant SaaS Project Management Platform"
     });
+    // ربط ملف الـ XML Documentation
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+    options.IncludeXmlComments(xmlPath);
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -35,12 +45,44 @@ builder.Services.AddSwaggerGen(options =>
     {
         [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>()
     });
+    options.UseInlineDefinitionsForEnums();
 });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)),
+
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero   // مهم جداً، هشرحها تحت
+    };
+});
+
+builder.Services.AddAuthorization();
 
 
-builder.Services.AddControllers();
- builder.Services.AddOpenApi();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+builder.Services.AddOpenApi();
 
  var app = builder.Build();
 
@@ -54,13 +96,12 @@ if (app.Environment.IsDevelopment())
         options.DocumentTitle = "ProSync API Docs";
     });
 }
+app.UseExceptionHandlingMiddleware();
 
 app.UseHttpsRedirection();
-
- app.UseAuthorization();
-
-
- app.MapControllers();
-
- app.Run();
+app.UseAuthentication();
+app.UseTenantResolutionMiddleware();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
         

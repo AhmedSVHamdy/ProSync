@@ -1,12 +1,15 @@
 ﻿using Core.Domain.RepositoryContracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+
 #pragma warning disable 1591
 namespace WebApi.Middlewares
 {
-    // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
@@ -26,13 +29,13 @@ namespace WebApi.Middlewares
             }
             catch (Exception ex)
             {
-                // ✅ الصح: مرر الـ ex كامل عشان الـ Logs في Azure تلقط الـ Stack Trace بالملي
                 _logger.LogError(ex, "حدث خطأ غير متوقع أثناء معالجة الطلب: {Message}", ex.Message);
 
                 var statusCode = ex switch
                 {
                     KeyNotFoundException => (int)HttpStatusCode.NotFound,
                     UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
+                    InvalidOperationException => (int)HttpStatusCode.BadRequest,
                     ArgumentException => (int)HttpStatusCode.BadRequest,
                     _ => (int)HttpStatusCode.InternalServerError
                 };
@@ -40,7 +43,6 @@ namespace WebApi.Middlewares
                 httpContext.Response.StatusCode = statusCode;
                 httpContext.Response.ContentType = "application/json";
 
-                // ✅ الحل الذكي: لو الخطأ 500 اخفي التفاصيل واظهر رسالة عامة، لو خطأ متوقع اظهر الرسالة الحقيقية
                 string clientMessage = statusCode == (int)HttpStatusCode.InternalServerError
                     ? "حدث خطأ داخلي في السيرفر، يرجى المحاولة لاحقاً."
                     : ex.Message;
@@ -55,7 +57,6 @@ namespace WebApi.Middlewares
         }
     }
 
-    // Extension method used to add the middleware to the HTTP request pipeline.
     public static class ExceptionHandlingMiddlewareExtensions
     {
         public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder builder)
@@ -63,6 +64,7 @@ namespace WebApi.Middlewares
             return builder.UseMiddleware<ExceptionHandlingMiddleware>();
         }
     }
+
     public class TenantResolutionMiddleware
     {
         private readonly RequestDelegate _next;
@@ -78,6 +80,14 @@ namespace WebApi.Middlewares
             }
 
             await _next(context);
+        }
+    }
+
+    public static class TenantResolutionMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseTenantResolutionMiddleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<TenantResolutionMiddleware>();
         }
     }
 }

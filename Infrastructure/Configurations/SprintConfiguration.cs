@@ -10,7 +10,7 @@ namespace Infrastructure.Configurations
 {
     public class SprintConfiguration : TenantEntityConfiguration<Sprint>
     {
-        public void Configure(EntityTypeBuilder<Sprint> builder)
+        public override  void Configure(EntityTypeBuilder<Sprint> builder)
         {
             base.Configure(builder);
 

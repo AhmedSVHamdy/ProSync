@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.ServiceContracts
+namespace Core.Domain.RepositoryContracts
 {
     public interface IGenericRepository<T> where T : BaseEntity
     {

@@ -9,8 +9,9 @@ namespace Infrastructure.Configurations
 {
     public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
     {
-        public void Configure(EntityTypeBuilder<RefreshToken> builder)
+        public  void Configure(EntityTypeBuilder<RefreshToken> builder)
         {
+            
             builder.ToTable("RefreshTokens");
             builder.HasKey(rt => rt.Id);
 

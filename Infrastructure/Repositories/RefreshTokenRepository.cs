@@ -1,7 +1,6 @@
 ﻿using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
 using Infrastructure.ApplicationDbContext;
-using Infrastructure.Migrations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

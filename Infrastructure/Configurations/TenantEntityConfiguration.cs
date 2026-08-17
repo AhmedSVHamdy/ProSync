@@ -13,11 +13,17 @@ namespace Infrastructure.Configurations
     {
         public virtual void Configure(EntityTypeBuilder<T> builder)
         {
+            builder.HasQueryFilter(x => x.TenantId == TenantProviderAccessor.TenantId);
+            ConfigureTenantRelation(builder);
+        }
+
+        // Virtual — الإعداد الافتراضي للكيانات اللي مالهاش Navigation Property لـ Tenant
+        protected virtual void ConfigureTenantRelation(EntityTypeBuilder<T> builder)
+        {
             builder.HasOne<Tenant>()
                 .WithMany()
                 .HasForeignKey(x => x.TenantId)
-                .OnDelete(DeleteBehavior.NoAction);
-
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

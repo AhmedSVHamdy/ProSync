@@ -20,16 +20,21 @@ namespace Infrastructure.Repositories
                 .Include(u => u.Tenant)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
+                
         }
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
+            return await _dbSet
+
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<List<User>> GetAllByTenantIdAsync(Guid tenantId)
         {
             return await _dbSet
+                .Include(u => u.Tenant)
                 .AsNoTracking()
                 .Where(u => u.TenantId == tenantId)
                 .ToListAsync();
@@ -37,20 +42,25 @@ namespace Infrastructure.Repositories
 
         public async Task AddTenantWithOwnerAsync(Tenant tenant, User owner)
         {
-            await using var transaction = await _context.Database.BeginTransactionAsync();
-            try
-            {
-                await _context.Tenants.AddAsync(tenant);
-                await _context.Users.AddAsync(owner);
-                await _context.SaveChangesAsync();
+            var strategy = _context.Database.CreateExecutionStrategy();
 
-                await transaction.CommitAsync();
-            }
-            catch
+            await strategy.ExecuteAsync(async () =>
             {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                await using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    await _context.Tenants.AddAsync(tenant);
+                    await _context.Users.AddAsync(owner);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
     }
 }

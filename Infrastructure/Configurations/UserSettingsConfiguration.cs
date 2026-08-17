@@ -10,7 +10,7 @@ namespace Infrastructure.Configurations
 {
     public class UserSettingsConfiguration : TenantEntityConfiguration<UserSettings>
     {
-        public void Configure(EntityTypeBuilder<UserSettings> builder)
+        public override void Configure(EntityTypeBuilder<UserSettings> builder)
         {
             base.Configure(builder);
             builder.ToTable("UserSettings");
@@ -25,8 +25,8 @@ namespace Infrastructure.Configurations
 
             // العلاقات
             // تم تعريف العلاقة في UserConfiguration، ولكن للتأكيد من الطرفين:
-            builder.HasOne<User>()
-                   .WithOne(x => x.UserSettings)
+            builder.HasOne(x => x.User)
+                   .WithOne(u => u.UserSettings)
                    .HasForeignKey<UserSettings>(x => x.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
 

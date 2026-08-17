@@ -10,10 +10,7 @@ namespace Core.Domain.Entities
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
-        public string? RefreshToken { get; set; }
         public bool IsActive { get; set; } = true;
-        public DateTime RefreshTokenExpirationDateTime { get; set; }
-
         public bool IsEmailVerified { get; set; } = false;
         public string? OtpCodeHash { get; set; }
         public DateTime? OtpExpiresAt { get; set; }

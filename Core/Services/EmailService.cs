@@ -46,6 +46,7 @@ namespace Core.Services
         // Method خاصة (private) تجمع منطق الإرسال المشترك بين الـ 3 methods فوق
         private async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
         {
+            Console.WriteLine($"[DEBUG] Sending to: {toEmail}");
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(
                 _configuration["EmailSettings:SenderName"],

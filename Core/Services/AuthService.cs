@@ -1,13 +1,11 @@
-﻿using Core.Domain.Entities;
+﻿using AutoMapper;
+using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
 using Core.DTO;
 using Core.Enums;
 using Core.ServiceContracts;
 using Core.ServiceContracts.Core.Application.Contracts.Services;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Core.Services
 {
@@ -16,30 +14,33 @@ namespace Core.Services
         private readonly IUserRepository _userRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly ITokenService _tokenService;
+        private readonly ITokenIssuerService _tokenIssuerService;   // ← بدل ITokenService
         private readonly IOtpService _otpService;
         private readonly IEmailService _emailService;
-        private readonly IConfiguration _configuration;
         private readonly IGoogleAuthValidator _googleAuthValidator;
+        private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
         public AuthService(
             IUserRepository userRepository,
             IRefreshTokenRepository refreshTokenRepository,
             IPasswordHasher passwordHasher,
-            ITokenService tokenService,
+            ITokenIssuerService tokenIssuerService,   // ← بدل tokenService
             IOtpService otpService,
             IEmailService emailService,
+            IGoogleAuthValidator googleAuthValidator,
             IConfiguration configuration,
-            IGoogleAuthValidator googleAuthValidator)
+            IMapper mapper)
         {
             _userRepository = userRepository;
             _refreshTokenRepository = refreshTokenRepository;
             _passwordHasher = passwordHasher;
-            _tokenService = tokenService;
+            _tokenIssuerService = tokenIssuerService;
             _otpService = otpService;
             _emailService = emailService;
-            _configuration = configuration;
             _googleAuthValidator = googleAuthValidator;
+            _configuration = configuration;
+            _mapper = mapper;
         }
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
@@ -70,14 +71,14 @@ namespace Core.Services
                 OtpExpiresAt = DateTime.UtcNow.AddMinutes(5)
             };
 
-            await _userRepository.AddTenantWithOwnerAsync(tenant, user);   // Method خاصة بيوضحها تحت
+            await _userRepository.AddTenantWithOwnerAsync(tenant, user);
             await _emailService.SendOtpEmailAsync(user.Email, rawOtp);
 
-            // مش بنرجع Access/Refresh Token هنا، لأن الحساب لسه مش متفعل (IsEmailVerified = false)
+            // ✅ الـ Bug اتصلح: مبقناش نستخدم _mapper.Map<AuthResponseDto>(user) لأنها مش معرّفة أصلاً
             return new AuthResponseDto
             {
-                Email = user.Email,
                 UserName = user.Name,
+                Email = user.Email,
                 Role = user.Role
             };
         }
@@ -109,54 +110,24 @@ namespace Core.Services
             if (!_passwordHasher.Verify(dto.Password, user.PasswordHash))
                 throw new UnauthorizedAccessException("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
 
+            if (!user.IsActive)
+                throw new UnauthorizedAccessException("هذا الحساب غير نشط.");
+
             if (!user.IsEmailVerified)
                 throw new InvalidOperationException("يجب تفعيل البريد الإلكتروني أولاً.");
 
-            return await GenerateAuthResponseAsync(user);
-        }
-
-        // Method خاصة مشتركة بين Login وRefreshToken وGoogleLogin وAcceptInvitation لاحقاً
-        private async Task<AuthResponseDto> GenerateAuthResponseAsync(User user)
-        {
-            var accessToken = _tokenService.GenerateAccessToken(user);
-            var (rawRefreshToken, refreshTokenHash) = _tokenService.GenerateRefreshToken();
-
-            var refreshTokenDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"]!);
-
-            var refreshTokenEntity = new RefreshToken
-            {
-                Id = Guid.NewGuid(),
-                UserId = user.Id,
-                TokenHash = refreshTokenHash,
-                CreatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenDays),
-                IsRevoked = false
-            };
-
-            await _refreshTokenRepository.AddAsync(refreshTokenEntity);
-
-            var accessTokenMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"]!);
-
-            return new AuthResponseDto
-            {
-                AccessToken = accessToken,
-                RefreshToken = rawRefreshToken,
-                AccessTokenExpiresAt = DateTime.UtcNow.AddMinutes(accessTokenMinutes),
-                UserName = user.Name,
-                Email = user.Email,
-                Role = user.Role
-            };
+            return await _tokenIssuerService.IssueTokensAsync(user);   // ← سطر واحد بدل الـ Method الكاملة
         }
 
         public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto dto)
         {
-            var userId = await _tokenService.ValidateAndGetUserIdFromExpiredTokenAsync(dto.AccessToken)
+            var userId = await _tokenIssuerService.ValidateAndGetUserIdFromExpiredTokenAsync(dto.AccessToken)
                 ?? throw new UnauthorizedAccessException("التوكن غير صالح.");
 
             var user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new UnauthorizedAccessException("المستخدم غير موجود.");
 
-            var storedTokens = await _refreshTokenRepository.GetActiveTokensByUserIdAsync(userId);   // IEnumerable هنا، هوضحها تحت
+            var storedTokens = await _refreshTokenRepository.GetActiveTokensByUserIdAsync(userId);
 
             RefreshToken? matchedToken = null;
             foreach (var token in storedTokens)
@@ -171,11 +142,10 @@ namespace Core.Services
             if (matchedToken is null || matchedToken.ExpiresAt < DateTime.UtcNow)
                 throw new UnauthorizedAccessException("جلسة الدخول منتهية، يرجى تسجيل الدخول مرة أخرى.");
 
-            // Rotation: نلغي القديم ونولد واحد جديد، عشان لو حد سرق التوكن القديم يبقى عديم الفايدة فوراً
             matchedToken.IsRevoked = true;
             await _refreshTokenRepository.UpdateAsync(matchedToken);
 
-            return await GenerateAuthResponseAsync(user);
+            return await _tokenIssuerService.IssueTokensAsync(user);
         }
 
         public async Task LogoutAsync(Guid userId, string refreshToken)
@@ -191,8 +161,6 @@ namespace Core.Services
                     return;
                 }
             }
-
-            // مفيش Exception هنا لو التوكن مش موجود أصلاً — الهدف النهائي (اليوزر يبقى Logged out) محقق بأي حال
         }
 
         public async Task ForgotPasswordAsync(ForgotPasswordRequestDto dto)
@@ -200,7 +168,7 @@ namespace Core.Services
             var user = await _userRepository.GetByEmailAsync(dto.Email);
 
             if (user is null)
-                return;   // مهم جداً: منرجعش Exception هنا (هنشرح ليه تحت)
+                return;
 
             var (rawOtp, otpHash) = _otpService.GenerateOtp();
 
@@ -225,8 +193,6 @@ namespace Core.Services
             user.OtpExpiresAt = null;
 
             await _userRepository.UpdateAsync(user);
-
-            // إجراء أمني مهم: نلغي كل الـ Refresh Tokens بتاعة اليوزر، عشان أي جلسة قديمة (خصوصاً لو الباسورد اتسرق) تتقفل فوراً
             await _refreshTokenRepository.RevokeAllUserTokensAsync(user.Id);
         }
 
@@ -241,7 +207,7 @@ namespace Core.Services
             user.PasswordHash = _passwordHasher.Hash(dto.NewPassword);
             await _userRepository.UpdateAsync(user);
 
-            await _refreshTokenRepository.RevokeAllUserTokensAsync(user.Id);   // نفس منطق ResetPassword
+            await _refreshTokenRepository.RevokeAllUserTokensAsync(user.Id);
         }
 
         public async Task ResendOtpAsync(ResendOtpRequestDto dto)
@@ -249,7 +215,7 @@ namespace Core.Services
             var user = await _userRepository.GetByEmailAsync(dto.Email);
 
             if (user is null || user.IsEmailVerified)
-                return;   // نفس منطق User Enumeration Prevention، مفيش تفاصيل ترجع للمستخدم
+                return;
 
             var (rawOtp, otpHash) = _otpService.GenerateOtp();
 
@@ -262,31 +228,21 @@ namespace Core.Services
 
         public async Task<UserProfileResponseDto> GetMeAsync(Guid userId)
         {
-            var user = await _userRepository.GetByIdWithTenantAsync(userId)   // Method خاصة بترجع الـ User مع الـ Tenant، هوضحها تحت
+            var user = await _userRepository.GetByIdWithTenantAsync(userId)
                 ?? throw new InvalidOperationException("المستخدم غير موجود.");
 
-            return new UserProfileResponseDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Role = user.Role,
-                TenantId = user.TenantId,
-                TenantName = user.Tenant?.Name ?? string.Empty,
-                IsEmailVerified = user.IsEmailVerified
-            };
+            return _mapper.Map<UserProfileResponseDto>(user);   // ✅ AutoMapper بدل البناء اليدوي
         }
 
         public async Task<AuthResponseDto> GoogleLoginAsync(GoogleLoginRequestDto dto)
         {
-            var payload = await _googleAuthValidator.ValidateAsync(dto.IdToken)   // Service خارجية جديدة، هنشرحها تحت
+            var payload = await _googleAuthValidator.ValidateAsync(dto.IdToken)
                 ?? throw new UnauthorizedAccessException("توكن جوجل غير صالح.");
 
             var user = await _userRepository.GetByEmailAsync(payload.Email);
 
             if (user is null)
             {
-                // أول مرة يدخل بجوجل، بننشئله Tenant و User جديدين تلقائياً (بنفس منطق Register)
                 var tenant = new Tenant
                 {
                     Id = Guid.NewGuid(),
@@ -300,15 +256,15 @@ namespace Core.Services
                     TenantId = tenant.Id,
                     Name = payload.Name,
                     Email = payload.Email,
-                    PasswordHash = string.Empty,   // مفيش باسورد أصلاً، اليوزر داخل بجوجل بس
+                    PasswordHash = string.Empty,
                     Role = UserRole.Owner.ToString(),
-                    IsEmailVerified = true   // جوجل أصلاً أكد الإيميل، مش محتاجين OTP تاني
+                    IsEmailVerified = true
                 };
 
                 await _userRepository.AddTenantWithOwnerAsync(tenant, user);
             }
 
-            return await GenerateAuthResponseAsync(user);
+            return await _tokenIssuerService.IssueTokensAsync(user);
         }
 
         public async Task DeleteAccountAsync(Guid userId, DeleteAccountRequestDto dto)
@@ -320,9 +276,12 @@ namespace Core.Services
                 throw new UnauthorizedAccessException("كلمة المرور غير صحيحة.");
 
             await _refreshTokenRepository.RevokeAllUserTokensAsync(user.Id);
-            await _userRepository.DeleteAsync(user);
-        }
 
-        
+            user.IsActive = false;
+            user.Email = $"deleted_{user.Id}@deleted.prosync.com";
+            user.Name = "مستخدم محذوف";
+
+            await _userRepository.UpdateAsync(user);
+        }
     }
 }

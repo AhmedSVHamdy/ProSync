@@ -10,7 +10,7 @@ namespace Infrastructure.Configurations
 {
     public class ProjectConfiguration : TenantEntityConfiguration<Project>
     {
-        public void Configure(EntityTypeBuilder<Project> builder)
+        public override void Configure(EntityTypeBuilder<Project> builder)
         {
             base.Configure(builder);
             builder.ToTable("Projects");

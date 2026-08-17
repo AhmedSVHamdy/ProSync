@@ -10,7 +10,7 @@ namespace Infrastructure.Configurations
 {
     public class AuditLogConfiguration : TenantEntityConfiguration<AuditLog>
     {
-        public void Configure(EntityTypeBuilder<AuditLog> builder)
+        public override void Configure(EntityTypeBuilder<AuditLog> builder)
         {
             base.Configure(builder);
 
