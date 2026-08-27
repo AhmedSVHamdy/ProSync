@@ -1,4 +1,4 @@
-﻿using Core.DTO;
+﻿using Core.DTO.Authentication;
 using Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -107,7 +107,7 @@ namespace WebApi.Controllers
             return Ok(new { message = "تم إعادة تعيين كلمة المرور بنجاح." });
         }
         /// <summary>
-        /// Changes the password for the currently authenticated user. The user must provide their current password and the new password they wish to set.
+        /// Changes the password for the currently authenticated user.
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
@@ -120,7 +120,7 @@ namespace WebApi.Controllers
             return Ok(new { message = "تم تغيير كلمة المرور بنجاح." });
         }
         /// <summary>
-        /// Retrieves the details of the currently authenticated user. This endpoint requires the user to be logged in and will return user-specific information based on their authentication token.
+        /// Retrieves the details of the currently authenticated user.
         /// </summary>
         /// <returns></returns>
         [HttpGet("me")]
@@ -132,7 +132,7 @@ namespace WebApi.Controllers
             return Ok(result);
         }
         /// <summary>
-        /// Deletes the account of the currently authenticated user. The user must provide their password for confirmation before the account can be deleted. This action is irreversible and will remove all associated data.
+        /// Deletes the account of the currently authenticated user.
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
@@ -145,7 +145,7 @@ namespace WebApi.Controllers
             return Ok(new { message = "تم حذف الحساب بنجاح." });
         }
         /// <summary>
-        /// Authenticates a user using their Google account. The user must provide a valid Google ID token, which will be verified and used to log the user in or create a new account if they don't already exist in the system.
+        /// Authenticates a user using their Google account. 
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>

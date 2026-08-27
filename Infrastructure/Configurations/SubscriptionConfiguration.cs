@@ -24,6 +24,10 @@ namespace Infrastructure.Configurations
             builder.Property(t => t.PlanTier)
                 .IsRequired()
                 .HasMaxLength(50);
+            builder.Property(t => t.StartDate)
+                .IsRequired();
+            builder.Property(t => t.EndDate)
+                .IsRequired();
             // كل Tenant له Subscription واحدة بس (One-to-One)
             builder.HasIndex(t => t.TenantId).IsUnique();
 

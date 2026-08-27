@@ -1,6 +1,6 @@
 ﻿using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
-using Core.DTO;
+using Core.DTO.Authentication;
 using Core.ServiceContracts;
 using Core.ServiceContracts.Core.Application.Contracts.Services;
 using Microsoft.Extensions.Configuration;

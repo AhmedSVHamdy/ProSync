@@ -25,6 +25,7 @@ namespace Infrastructure.Configurations
                 .IsRequired()
                 .HasMaxLength(500);
             builder.Property(t => t.Status)
+                .HasConversion<string>()
                 .IsRequired()
                 .HasMaxLength(50);
             builder.HasOne(t => t.Project)           

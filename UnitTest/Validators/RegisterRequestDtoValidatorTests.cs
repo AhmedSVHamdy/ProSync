@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using Core.DTO.Authentication;
 using Core.Validators;
 using FluentValidation.TestHelper;
 using System;

@@ -1,4 +1,4 @@
-﻿using Core.DTO;
+﻿using Core.DTO.Authentication;
 using Core.Enums;
 using System;
 using System.Collections.Generic;

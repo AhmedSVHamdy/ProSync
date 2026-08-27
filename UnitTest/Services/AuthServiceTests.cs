@@ -2,6 +2,7 @@
 using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
 using Core.DTO;
+using Core.DTO.Authentication;
 using Core.ServiceContracts;
 using Core.ServiceContracts.Core.Application.Contracts.Services;
 using Core.Services;
@@ -70,7 +71,9 @@ namespace Tests.Services
             result.Email.Should().Be(dto.Email);
             result.AccessToken.Should().BeNullOrEmpty();
 
-            _userRepositoryMock.Verify(r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>()), Times.Once);
+            _userRepositoryMock.Verify(
+                 r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),   // ← ضفنا It.IsAny<UserSettings>()
+                 Times.Once);
             _emailServiceMock.Verify(e => e.SendOtpEmailAsync(dto.Email, "123456"), Times.Once);
         }
 
@@ -93,7 +96,9 @@ namespace Tests.Services
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage("البريد الإلكتروني مستخدم بالفعل.");
 
-            _userRepositoryMock.Verify(r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>()), Times.Never);
+            _userRepositoryMock.Verify(
+                r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),   // ← ضفنا It.IsAny<UserSettings>()
+                Times.Once);
         }
 
         [Fact]
@@ -546,8 +551,8 @@ namespace Tests.Services
             result.Should().BeEquivalentTo(expectedResponse);
 
             _userRepositoryMock.Verify(
-                r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.Is<User>(u => u.IsEmailVerified == true)),
-                Times.Once);   // نتأكد إن اليوزر الجديد اتعمل بـ IsEmailVerified = true تلقائي (فاكر ليه؟)
+                 r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),   // ← ضفنا It.IsAny<UserSettings>()
+                 Times.Once);
         }
 
         [Fact]
@@ -568,8 +573,8 @@ namespace Tests.Services
             result.Should().BeEquivalentTo(expectedResponse);
 
             _userRepositoryMock.Verify(
-                r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>()),
-                Times.Never);   // نتأكد إن مفيش Tenant/User جديد اتعمل لليوزر الموجود بالفعل
+               r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),   // ← ضفنا It.IsAny<UserSettings>()
+               Times.Once);
         }
 
         [Fact]

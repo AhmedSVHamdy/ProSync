@@ -3,6 +3,7 @@ using Core.ServiceContracts;
 using Core.Services;
 using Infrastructure.ApplicationDbContext;
 using Infrastructure.Repositories;
+using Infrastructure.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,15 @@ namespace Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IInvitationRepository, InvitationRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<ISprintRepository, SprintRepository>();
+            services.AddScoped<ITaskItemRepository, TaskItemRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IUserSettingsRepository, UserSettingsRepository>();
+            services.AddScoped<ITaskNotifier, SignalRTaskNotifier>();
+            services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+            services.AddSignalR();
+
             return services;
         }
        

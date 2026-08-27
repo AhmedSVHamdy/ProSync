@@ -16,5 +16,24 @@ namespace WebApi.Controllers
 
             return userId;
         }
+        protected Guid GetCurrentTenantId()   // ← تأكد إن ده السطر موجود فعلاً
+        {
+            var tenantIdClaim = User.FindFirst("TenantId")?.Value;
+
+            if (string.IsNullOrEmpty(tenantIdClaim) || !Guid.TryParse(tenantIdClaim, out var tenantId))
+                throw new UnauthorizedAccessException("لم يتم التعرف على الشركة.");
+
+            return tenantId;
+
+        }
+        protected string GetCurrentUserRole()
+        {
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (string.IsNullOrEmpty(role))
+                throw new UnauthorizedAccessException("لم يتم التعرف على دور المستخدم.");
+
+            return role;
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
-using Core.DTO;
+using Core.DTO.Authentication;
 using Core.Enums;
 using Core.Services;
 using FluentAssertions;

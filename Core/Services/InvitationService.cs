@@ -1,6 +1,7 @@
 ﻿using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
 using Core.DTO;
+using Core.DTO.Authentication;
 using Core.Helpers;
 using Core.ServiceContracts;
 using Core.ServiceContracts.Core.Application.Contracts.Services;
@@ -19,6 +20,7 @@ namespace Core.Services
         private readonly IEmailService _emailService;
         private readonly ITokenIssuerService _tokenIssuerService;
         private readonly IConfiguration _configuration;
+        private readonly IUserSettingsRepository _userSettingsRepository;
 
         public InvitationService(
             IInvitationRepository invitationRepository,
@@ -26,7 +28,8 @@ namespace Core.Services
             IPasswordHasher passwordHasher,
             IEmailService emailService,
             ITokenIssuerService tokenIssuerService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IUserSettingsRepository userSettingsRepository)
         {
             _invitationRepository = invitationRepository;
             _userRepository = userRepository;
@@ -34,6 +37,7 @@ namespace Core.Services
             _emailService = emailService;
             _tokenIssuerService = tokenIssuerService;
             _configuration = configuration;
+            _userSettingsRepository = userSettingsRepository;
         }
 
         public async Task InviteUserAsync(Guid invitedByUserId, InviteUserRequestDto dto)
@@ -88,6 +92,17 @@ namespace Core.Services
             };
 
             await _userRepository.AddAsync(newUser);
+
+            var userSettings = new UserSettings
+            {
+                Id = Guid.NewGuid(),
+                TenantId = invitation.TenantId,
+                UserId = newUser.Id,
+                EmailNotifications = true,
+                NotificationsEnabled = true
+            };
+
+            await _userSettingsRepository.AddAsync(userSettings);
 
             invitation.IsAccepted = true;
             await _invitationRepository.UpdateAsync(invitation);

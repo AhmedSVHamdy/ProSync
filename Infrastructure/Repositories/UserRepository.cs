@@ -40,7 +40,8 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task AddTenantWithOwnerAsync(Tenant tenant, User owner)
+        // في UserRepository (Implementation)
+        public async Task AddTenantWithOwnerAsync(Tenant tenant, User owner, UserSettings ownerSettings, Subscription subscription)
         {
             var strategy = _context.Database.CreateExecutionStrategy();
 
@@ -51,6 +52,8 @@ namespace Infrastructure.Repositories
                 {
                     await _context.Tenants.AddAsync(tenant);
                     await _context.Users.AddAsync(owner);
+                    await _context.UserSettings.AddAsync(ownerSettings);
+                    await _context.Subscriptions.AddAsync(subscription);   // ← الإضافة الجديدة
                     await _context.SaveChangesAsync();
 
                     await transaction.CommitAsync();

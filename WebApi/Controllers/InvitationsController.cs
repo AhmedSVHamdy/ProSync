@@ -1,5 +1,6 @@
 ﻿using Core.Domain.Entities;
 using Core.DTO;
+using Core.DTO.Authentication;
 using Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Accepts an invitation using a token, allowing the invited user to join the system. This endpoint is accessible to anyone with a valid invitation token.
+        /// Accepts an invitation using a token, allowing the invited user to join the system. 
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>

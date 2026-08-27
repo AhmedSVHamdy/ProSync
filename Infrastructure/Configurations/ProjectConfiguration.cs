@@ -21,6 +21,7 @@ namespace Infrastructure.Configurations
                 .HasMaxLength(150);
             builder.Property(p => p.Status)
                 .IsRequired()
+                .HasConversion<string>()
                 .HasMaxLength (50);
         }
     }

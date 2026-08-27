@@ -1,12 +1,15 @@
 using Core; // 👈 1. ضيفنا دي عشان يشوف AddCoreServices
 using FluentValidation.AspNetCore;
 using Infrastructure;
+using Infrastructure.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using WebApi.Controllers;
+using WebApi.Filters;
 using WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,6 +77,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "ProSync_";
+});
+
 
 
 builder.Services.AddControllers()
@@ -83,8 +92,7 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddOpenApi();
-
- var app = builder.Build();
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -96,6 +104,8 @@ if (app.Environment.IsDevelopment())
         options.DocumentTitle = "ProSync API Docs";
     });
 }
+
+app.MapHub<KanbanHub>("/SignalR/kanban");
 app.UseExceptionHandlingMiddleware();
 
 app.UseHttpsRedirection();

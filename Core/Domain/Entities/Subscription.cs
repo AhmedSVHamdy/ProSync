@@ -8,7 +8,9 @@ namespace Core.Domain.Entities
     {
         public string PlanTier { get; set; } = string.Empty;
         public int MaxEmployees { get; set; } 
-        public bool GitHubEnabled { get; set; } 
+        public bool GitHubEnabled { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
     }
 }

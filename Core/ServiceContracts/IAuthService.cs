@@ -1,4 +1,4 @@
-﻿using Core.DTO;
+﻿using Core.DTO.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Text;

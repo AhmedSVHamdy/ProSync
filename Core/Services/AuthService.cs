@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
-using Core.DTO;
+using Core.DTO.Authentication;
 using Core.Enums;
 using Core.ServiceContracts;
 using Core.ServiceContracts.Core.Application.Contracts.Services;
@@ -71,10 +71,28 @@ namespace Core.Services
                 OtpExpiresAt = DateTime.UtcNow.AddMinutes(5)
             };
 
-            await _userRepository.AddTenantWithOwnerAsync(tenant, user);
+            var userSettings = new UserSettings
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenant.Id,
+                UserId = user.Id,
+                EmailNotifications = true,
+                NotificationsEnabled = true
+            };
+
+            // الإضافة الجديدة: Subscription افتراضية بالباقة المجانية
+            var subscription = new Subscription
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenant.Id,
+                PlanTier = PlanTier.Free.ToString(),
+                MaxEmployees = 5,           // فاكر حد الباقة المجانية اللي اتفقنا عليه بدري؟
+                GitHubEnabled = false
+            };
+
+            await _userRepository.AddTenantWithOwnerAsync(tenant, user, userSettings, subscription);
             await _emailService.SendOtpEmailAsync(user.Email, rawOtp);
 
-            // ✅ الـ Bug اتصلح: مبقناش نستخدم _mapper.Map<AuthResponseDto>(user) لأنها مش معرّفة أصلاً
             return new AuthResponseDto
             {
                 UserName = user.Name,
@@ -261,7 +279,25 @@ namespace Core.Services
                     IsEmailVerified = true
                 };
 
-                await _userRepository.AddTenantWithOwnerAsync(tenant, user);
+                var userSettings = new UserSettings
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenant.Id,
+                    UserId = user.Id,
+                    EmailNotifications = true,
+                    NotificationsEnabled = true
+                };
+
+                var subscription = new Subscription
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenant.Id,
+                    PlanTier = PlanTier.Free.ToString(),
+                    StartDate = DateTime.UtcNow,
+                    EndDate = DateTime.UtcNow.AddYears(1)
+                };
+
+                await _userRepository.AddTenantWithOwnerAsync(tenant, user, userSettings, subscription);
             }
 
             return await _tokenIssuerService.IssueTokensAsync(user);

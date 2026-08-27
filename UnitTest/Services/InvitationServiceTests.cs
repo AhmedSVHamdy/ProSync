@@ -2,6 +2,7 @@
 using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
 using Core.DTO;
+using Core.DTO.Authentication;
 using Core.Enums;
 using Core.Helpers;
 using Core.ServiceContracts;
@@ -24,6 +25,7 @@ namespace Tests.Services
         private readonly Mock<ITokenIssuerService> _tokenIssuerServiceMock;
         private readonly Mock<IConfiguration> _configurationMock;
         private readonly InvitationService _invitationService;
+        private readonly Mock<IUserSettingsRepository> _userSettingsRepositoryMock;
 
         public InvitationServiceTests()
         {
@@ -33,14 +35,16 @@ namespace Tests.Services
             _emailServiceMock = new Mock<IEmailService>();
             _tokenIssuerServiceMock = new Mock<ITokenIssuerService>();
             _configurationMock = new Mock<IConfiguration>();
+            _userSettingsRepositoryMock = new Mock<IUserSettingsRepository>();
 
             _invitationService = new InvitationService(
-                _invitationRepositoryMock.Object,
-                _userRepositoryMock.Object,
-                _passwordHasherMock.Object,
-                _emailServiceMock.Object,
-                _tokenIssuerServiceMock.Object,
-                _configurationMock.Object);
+                 _invitationRepositoryMock.Object,
+                 _userRepositoryMock.Object,
+                 _passwordHasherMock.Object,
+                 _emailServiceMock.Object,
+                 _tokenIssuerServiceMock.Object,
+                 _configurationMock.Object,
+                 _userSettingsRepositoryMock.Object);
         }
 
         [Fact]
@@ -116,7 +120,7 @@ namespace Tests.Services
                 TenantId = Guid.NewGuid(),
                 Email = "newmember@test.com",
                 Role = UserRole.Member,
-                TokenHash = TokenHasher.HashDeterministic(rawToken),   // نفس منطق SHA256 اللي اتفقنا عليه
+                TokenHash = TokenHasher.HashDeterministic(rawToken),
                 ExpiresAt = DateTime.UtcNow.AddDays(1),
                 IsAccepted = false
             };
@@ -140,6 +144,11 @@ namespace Tests.Services
 
             _userRepositoryMock.Verify(
                 r => r.AddAsync(It.Is<User>(u => u.Email == invitation.Email && u.IsEmailVerified == true)),
+                Times.Once);
+
+            // إضافة جديدة: نتأكد إن UserSettings اتعملت كمان لليوزر الجديد
+            _userSettingsRepositoryMock.Verify(
+                r => r.AddAsync(It.Is<UserSettings>(s => s.NotificationsEnabled == true && s.EmailNotifications == true)),
                 Times.Once);
 
             _invitationRepositoryMock.Verify(r => r.UpdateAsync(invitation), Times.Once);
