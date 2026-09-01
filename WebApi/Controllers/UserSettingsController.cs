@@ -1,6 +1,7 @@
 ﻿using Core.Domain.Features.Projects.Commands.UpdateUserSettings;
 using Core.Domain.RepositoryContracts;
 using Core.DTO;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,12 @@ namespace WebApi.Controllers
     public class UserSettingsController : BaseApiController
     {
         private readonly IUserSettingsRepository _userSettingsRepository;
+        private readonly IUserRepository _userRepository;
 
-        public UserSettingsController(IUserSettingsRepository userSettingsRepository)
+        public UserSettingsController(IUserSettingsRepository userSettingsRepository, IUserRepository userRepository)
         {
             _userSettingsRepository = userSettingsRepository;
+            _userRepository = userRepository;
         }
         /// <summary>
         /// Get UserSetting by Authorize
@@ -60,6 +63,19 @@ namespace WebApi.Controllers
 
             await _userSettingsRepository.UpdateAsync(settings);
             return Ok(settings);
+        }
+
+        [HttpPut("specialty")]
+        public async Task<IActionResult> UpdateSpecialty([FromBody] UpdateSpecialtyCommand command)
+        {
+            var userId = GetCurrentUserId();
+            var user = await _userRepository.GetByIdAsync(userId)
+                ?? throw new InvalidOperationException("المستخدم غير موجود.");
+
+            user.Specialty = command.Specialty;
+            await _userRepository.UpdateAsync(user);
+
+            return Ok(new { message = "تم تحديث التخصص بنجاح." });
         }
     }
 }

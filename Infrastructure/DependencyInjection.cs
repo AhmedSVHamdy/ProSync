@@ -1,7 +1,9 @@
 ﻿using Core.Domain.RepositoryContracts;
 using Core.ServiceContracts;
 using Core.Services;
+using Hangfire;
 using Infrastructure.ApplicationDbContext;
+using Infrastructure.Interceptors;
 using Infrastructure.Repositories;
 using Infrastructure.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +22,7 @@ namespace Infrastructure
             // ====================================================
             // 1. إعدادات قواعد البيانات (SQL)
             // ====================================================
-            services.AddDbContext<ProSyncContext>(options =>
+            services.AddDbContext<ProSyncContext>((serviceProvider ,options) =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 sqlOptions =>
@@ -30,7 +32,23 @@ namespace Infrastructure
                         maxRetryDelay: TimeSpan.FromSeconds(10),
                         errorNumbersToAdd: null);
                 });
+                options.AddInterceptors(new AuditLogInterceptor());
             });
+
+            // ====================================================
+            // 3. إعدادات Hangfire (العسكري اللي مش بينام)
+            // ====================================================
+            services.AddHangfire(config => config
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                // بيستخدم نفس الـ ConnectionString بتاع المشروع
+                .UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection")));
+
+            // تشغيل السيرفر الداخلي لـ Hangfire عشان يبدأ ينفذ المهام
+            services.AddHangfireServer();
+
+
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ITenantProviderRepository, TenantProviderRepositories>();
             services.AddScoped<IUserRepository, UserRepository>();

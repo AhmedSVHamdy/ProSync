@@ -70,5 +70,10 @@ namespace Core.Services
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
         }
+        public async Task SendNotificationEmailAsync(string toEmail, string title, string message)
+        {
+            var body = $"<h3>{title}</h3><p>{message}</p><p><small>هذا إشعار تلقائي من ProSync.</small></p>";
+            await SendEmailAsync(toEmail, title, body);
+        }
     }
 }

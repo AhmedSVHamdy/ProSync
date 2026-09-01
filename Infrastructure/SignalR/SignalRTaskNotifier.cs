@@ -29,5 +29,13 @@ namespace Infrastructure.SignalR
                 .Group($"project-{projectId}")
                 .SendAsync("TaskAssigned", task);
         }
+
+        // في SignalRTaskNotifier (فاكرها في WebApi/Services؟)
+        public async Task NotifyTaskEscalatedAsync(Guid projectId, Guid taskId, string taskTitle)
+        {
+            await _hubContext.Clients
+                .Group($"project-{projectId}")
+                .SendAsync("TaskEscalated", new { taskId, taskTitle });
+        }
     }
 }

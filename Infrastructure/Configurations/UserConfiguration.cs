@@ -33,6 +33,9 @@ namespace Infrastructure.Configurations
               .IsRequired()
               .HasMaxLength(50);
 
+            builder.Property(u => u.Specialty)
+                .HasMaxLength(100);
+
 
             builder.HasOne(u => u.UserSettings)
                    .WithOne(u => u.User)

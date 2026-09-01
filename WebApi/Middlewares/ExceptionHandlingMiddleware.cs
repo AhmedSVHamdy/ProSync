@@ -1,4 +1,5 @@
-﻿using Core.Domain.RepositoryContracts;
+﻿using Core.Domain.Features.Projects.Commands.MultiTenancy;
+using Core.Domain.RepositoryContracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -77,6 +78,14 @@ namespace WebApi.Middlewares
             if (Guid.TryParse(tenantIdClaim, out var tenantId))
             {
                 TenantProviderAccessor.TenantId = tenantId;
+            }
+
+            // الإضافة الجديدة
+            var userIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                ?? context.User.FindFirst("sub")?.Value;
+            if (Guid.TryParse(userIdClaim, out var userId))
+            {
+                TenantProviderAccessor.CurrentUserId = userId;
             }
 
             await _next(context);

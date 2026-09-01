@@ -11,7 +11,9 @@ namespace Core.Domain.RepositoryContracts
         Task<User?> GetByIdWithTenantAsync(Guid id);
         Task<User?> GetByEmailAsync(string email);
         Task<List<User>> GetAllByTenantIdAsync(Guid tenantId);
+        Task<List<User>> GetManagersByTenantIdForSystemAsync(Guid tenantId);
         // في IUserRepository
         Task AddTenantWithOwnerAsync(Tenant tenant, User owner, UserSettings ownerSettings, Subscription subscription);
+        Task<int> GetEmployeeCountByTenantIdAsync(Guid tenantId);
     }
 }

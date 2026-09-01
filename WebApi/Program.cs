@@ -1,5 +1,8 @@
 using Core; // 👈 1. ضيفنا دي عشان يشوف AddCoreServices
+using Core.ServiceContracts;
+using Core.Services;
 using FluentValidation.AspNetCore;
+using Hangfire;
 using Infrastructure;
 using Infrastructure.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -90,7 +93,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-
+builder.Services.AddHttpClient<IAiTaskBreakdownService, GeminiTaskBreakdownService>();
 builder.Services.AddOpenApi();
 var app = builder.Build();
 
@@ -112,6 +115,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseTenantResolutionMiddleware();
 app.UseAuthorization();
+app.UseHangfireDashboard("/hangfire");
+RecurringJob.AddOrUpdate<ISlaEscalationService>(
+    "sla-escalation-check",
+    service => service.CheckForOverdueCriticalTasksAsync(),
+    "0 */2 * * *");   // كل ساعتين
 app.MapControllers();
 app.Run();
         

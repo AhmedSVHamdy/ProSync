@@ -14,7 +14,9 @@ namespace Infrastructure.Repositories
 
         public async Task<UserSettings?> GetByUserIdAsync(Guid userId)
         {
-            return await _dbSet.FirstOrDefaultAsync(s => s.UserId == userId);
+            return await _dbSet
+        .IgnoreQueryFilters()   // ← تأكد إنها موجودة
+        .FirstOrDefaultAsync(s => s.UserId == userId);
         }
     }
 }

@@ -5,6 +5,7 @@ using Core.DTO.Authentication;
 using Core.Enums;
 using Core.ServiceContracts;
 using Core.ServiceContracts.Core.Application.Contracts.Services;
+using Hangfire;
 using Microsoft.Extensions.Configuration;
 
 namespace Core.Services
@@ -91,7 +92,7 @@ namespace Core.Services
             };
 
             await _userRepository.AddTenantWithOwnerAsync(tenant, user, userSettings, subscription);
-            await _emailService.SendOtpEmailAsync(user.Email, rawOtp);
+            BackgroundJob.Enqueue<IEmailService>(x => x.SendOtpEmailAsync(user.Email, rawOtp));
 
             return new AuthResponseDto
             {
@@ -194,7 +195,7 @@ namespace Core.Services
             user.OtpExpiresAt = DateTime.UtcNow.AddMinutes(5);
 
             await _userRepository.UpdateAsync(user);
-            await _emailService.SendPasswordResetEmailAsync(user.Email, rawOtp);
+            BackgroundJob.Enqueue<IEmailService>(x => x.SendPasswordResetEmailAsync(user.Email, rawOtp)); ;
         }
 
         public async Task ResetPasswordAsync(ResetPasswordRequestDto dto)
@@ -241,7 +242,7 @@ namespace Core.Services
             user.OtpExpiresAt = DateTime.UtcNow.AddMinutes(5);
 
             await _userRepository.UpdateAsync(user);
-            await _emailService.SendOtpEmailAsync(user.Email, rawOtp);
+            BackgroundJob.Enqueue<IEmailService>(x => x.SendOtpEmailAsync(user.Email, rawOtp));
         }
 
         public async Task<UserProfileResponseDto> GetMeAsync(Guid userId)

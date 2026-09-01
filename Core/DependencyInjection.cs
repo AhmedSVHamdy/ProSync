@@ -32,8 +32,8 @@ namespace Core
             services.AddScoped<ICacheService, RedisCacheService>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
             services.AddScoped<INotificationService, NotificationService>();
-
-
+            services.AddScoped<ISlaEscalationService, SlaEscalationService>();
+            services.AddScoped<IGitHubWebhookService, GitHubWebhookService>();
 
             services.AddValidatorsFromAssemblyContaining<RegisterRequestDtoValidator>();
             services.AddAutoMapper(cfg => { }, typeof(AuthMappingProfile).Assembly);

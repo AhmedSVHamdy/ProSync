@@ -1,5 +1,6 @@
 ﻿using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
+using Core.Enums;
 using Infrastructure.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -64,6 +65,19 @@ namespace Infrastructure.Repositories
                     throw;
                 }
             });
+        }
+        public async Task<List<User>> GetManagersByTenantIdForSystemAsync(Guid tenantId)
+        {
+            return await _dbSet
+                .IgnoreQueryFilters()   // مقصودة هنا، لأنها Background Job context
+                .AsNoTracking()
+                .Where(u => u.TenantId == tenantId &&
+                            (u.Role == UserRole.Owner.ToString() || u.Role == UserRole.Admin.ToString()))
+                .ToListAsync();
+        }
+        public async Task<int> GetEmployeeCountByTenantIdAsync(Guid tenantId)
+        {
+            return await _dbSet.CountAsync(u => u.TenantId == tenantId && u.IsActive);
         }
     }
 }
