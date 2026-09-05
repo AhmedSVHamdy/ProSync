@@ -9,6 +9,7 @@ namespace Core.Domain.Entities
     {
         public string Email { get; set; } = string.Empty;
         public UserRole Role { get; set; }
+        public string? Specialty { get; set; }
         public string TokenHash { get; set; } = string.Empty;   // نفس منطق الـ OTP والـ RefreshToken، Hash مش القيمة الخام
         public DateTime ExpiresAt { get; set; }
         public bool IsAccepted { get; set; } = false;

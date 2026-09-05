@@ -18,6 +18,9 @@ namespace Core.Validators
             RuleFor(x => x.Role)
                 .IsInEnum().WithMessage("الدور المحدد غير صالح.")
                 .NotEqual(UserRole.Owner).WithMessage("لا يمكن دعوة مستخدم بدور مالك الشركة.");
+
+            RuleFor(x => x.Specialty)
+            .MaximumLength(100).WithMessage("التخصص طويل جداً.");
         }
     }
 }

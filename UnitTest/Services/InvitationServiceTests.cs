@@ -26,6 +26,7 @@ namespace Tests.Services
         private readonly Mock<IConfiguration> _configurationMock;
         private readonly InvitationService _invitationService;
         private readonly Mock<IUserSettingsRepository> _userSettingsRepositoryMock;
+        private readonly Mock<ISubscriptionService> _subscriptionServiceMock;
 
         public InvitationServiceTests()
         {
@@ -36,6 +37,7 @@ namespace Tests.Services
             _tokenIssuerServiceMock = new Mock<ITokenIssuerService>();
             _configurationMock = new Mock<IConfiguration>();
             _userSettingsRepositoryMock = new Mock<IUserSettingsRepository>();
+            _subscriptionServiceMock = new Mock<ISubscriptionService>();
 
             _invitationService = new InvitationService(
                  _invitationRepositoryMock.Object,
@@ -44,7 +46,8 @@ namespace Tests.Services
                  _emailServiceMock.Object,
                  _tokenIssuerServiceMock.Object,
                  _configurationMock.Object,
-                 _userSettingsRepositoryMock.Object);
+                 _userSettingsRepositoryMock.Object,
+                 _subscriptionServiceMock.Object);
         }
 
         [Fact]

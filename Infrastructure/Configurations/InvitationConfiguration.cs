@@ -23,6 +23,13 @@ namespace Infrastructure.Configurations
             builder.Property(i => i.TokenHash)
                 .IsRequired()
                 .HasMaxLength(500);
+            builder.Property(i => i.Role)
+                .IsRequired()
+                .HasConversion<string>()
+                .HasMaxLength(50);
+
+            builder.Property(i => i.Specialty)
+                .HasMaxLength(100);
 
             builder.Property(i => i.ExpiresAt).IsRequired();
             builder.Property(i => i.CreatedAt).IsRequired();

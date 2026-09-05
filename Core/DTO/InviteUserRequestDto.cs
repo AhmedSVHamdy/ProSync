@@ -10,6 +10,7 @@ namespace Core.DTO
         public string Email { get; set; } = string.Empty;
         
         public UserRole Role { get; set; }
+        public string? Specialty { get; set; }
     }
     public class InvitationResponseDto
     {

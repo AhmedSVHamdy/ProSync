@@ -21,6 +21,7 @@ namespace Core.Services
         private readonly ITokenIssuerService _tokenIssuerService;
         private readonly IConfiguration _configuration;
         private readonly IUserSettingsRepository _userSettingsRepository;
+        private readonly ISubscriptionService _subscriptionService;
 
         public InvitationService(
             IInvitationRepository invitationRepository,
@@ -29,7 +30,8 @@ namespace Core.Services
             IEmailService emailService,
             ITokenIssuerService tokenIssuerService,
             IConfiguration configuration,
-            IUserSettingsRepository userSettingsRepository)
+            IUserSettingsRepository userSettingsRepository,
+            ISubscriptionService subscriptionService)
         {
             _invitationRepository = invitationRepository;
             _userRepository = userRepository;
@@ -38,6 +40,7 @@ namespace Core.Services
             _tokenIssuerService = tokenIssuerService;
             _configuration = configuration;
             _userSettingsRepository = userSettingsRepository;
+            _subscriptionService = subscriptionService;
         }
 
         public async Task InviteUserAsync(Guid invitedByUserId, InviteUserRequestDto dto)
@@ -49,6 +52,15 @@ namespace Core.Services
             if (existingUser is not null)
                 throw new InvalidOperationException("هذا البريد الإلكتروني مسجل بالفعل.");
 
+            var subscription = await _subscriptionService.GetSubscriptionAsync(invitingUser.TenantId);
+            var currentEmployeeCount = await _userRepository.GetEmployeeCountByTenantIdAsync(invitingUser.TenantId);
+
+            if (currentEmployeeCount >= subscription.MaxEmployees)
+            {
+                throw new InvalidOperationException(
+                    $"وصلت لحد الموظفين المسموح به في باقتك الحالية ({subscription.MaxEmployees}). يرجى الترقية لدعوة المزيد.");
+            }
+
             var rawToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
             var tokenHash = TokenHasher.HashDeterministic(rawToken);
 
@@ -58,6 +70,7 @@ namespace Core.Services
                 TenantId = invitingUser.TenantId,
                 Email = dto.Email,
                 Role = dto.Role,
+                Specialty = dto.Specialty,
                 TokenHash = tokenHash,
                 ExpiresAt = DateTime.UtcNow.AddDays(3),
                 IsAccepted = false,
@@ -88,6 +101,7 @@ namespace Core.Services
                 Email = invitation.Email,
                 PasswordHash = _passwordHasher.Hash(dto.Password),
                 Role = invitation.Role.ToString(),
+                Specialty = invitation.Specialty,
                 IsEmailVerified = true
             };
 

@@ -20,7 +20,8 @@ namespace Infrastructure.Configurations
                  
             builder.Property(a => a.Action)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasConversion<string>()
+                .HasMaxLength(50);
             builder.Property(a => a.Timestamp)
                 .IsRequired();
             builder.HasOne(a => a.User)
