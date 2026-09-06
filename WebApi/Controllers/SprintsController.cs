@@ -18,11 +18,11 @@ namespace WebApi.Controllers
         {
             _mediator = mediator;
         }
-       /// <summary>
-       /// Create Sprint 
-       /// </summary>
-       /// <param name="command"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Creates a new sprint for the current tenant.
+        /// </summary>
+        /// <param name="command">The command containing sprint creation details.</param>
+        /// <returns>Returns the result of the created sprint.</returns>
         [HttpPost]
         [Authorize(Roles = "Owner,Admin")]
         public async Task<IActionResult> Create([FromBody] CreateSprintCommand command)
@@ -32,10 +32,10 @@ namespace WebApi.Controllers
             return Ok(result);
         }
         /// <summary>
-        /// Update Close
+        /// Closes the sprint identified by the given id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">The identifier of the sprint to close.</param>
+        /// <returns>Returns the result of the close operation.</returns>
         [HttpPut("{id}/close")]
         [Authorize(Roles = "Owner,Admin")]
         public async Task<IActionResult> Close(Guid id)
@@ -44,10 +44,10 @@ namespace WebApi.Controllers
             return Ok(result);
         }
         /// <summary>
-        /// Get Project by ID
+        /// Retrieves all sprints for the specified project.
         /// </summary>
-        /// <param name="projectId"></param>
-        /// <returns></returns>
+        /// <param name="projectId">The project identifier.</param>
+        /// <returns>Returns a list of sprints for the project.</returns>
         [HttpGet("project/{projectId}")]
         public async Task<IActionResult> GetByProject(Guid projectId)
         {

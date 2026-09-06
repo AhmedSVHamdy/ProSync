@@ -70,6 +70,16 @@ namespace Tests.Services
             _userRepositoryMock.Setup(r => r.GetByEmailAsync(dto.Email)).ReturnsAsync((User?)null);
             _configurationMock.Setup(c => c["ClientApp:BaseUrl"]).Returns("http://localhost:3000");
 
+
+            // الإضافة الجديدة: لازم نظبط الـ Subscription والعدد الحالي، وإلا هيفشل بنفس المشكلة
+            _subscriptionServiceMock
+                .Setup(s => s.GetSubscriptionAsync(tenant.Id))
+                .ReturnsAsync(new SubscriptionCacheDto { PlanTier = "Free", MaxEmployees = 5, GitHubEnabled = false });
+
+            _userRepositoryMock
+                .Setup(r => r.GetEmployeeCountByTenantIdAsync(tenant.Id))
+                .ReturnsAsync(1);   // أقل من الحد (5)، فمفروض التسجيل ينجح
+ 
             await _invitationService.InviteUserAsync(invitedByUserId, dto);
 
             _invitationRepositoryMock.Verify(
@@ -177,6 +187,33 @@ namespace Tests.Services
                 .WithMessage("الدعوة غير صالحة أو منتهية الصلاحية.");
 
             _userRepositoryMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InviteUserAsync_WhenEmployeeLimitReached_ThrowsInvalidOperationException()
+        {
+            var invitedByUserId = Guid.NewGuid();
+            var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Ahmed's Company" };
+            var invitingUser = new User { Id = invitedByUserId, TenantId = tenant.Id, Tenant = tenant };
+            var dto = new InviteUserRequestDto { Email = "newmember@test.com", Role = UserRole.Member };
+
+            _userRepositoryMock.Setup(r => r.GetByIdAsync(invitedByUserId)).ReturnsAsync(invitingUser);
+            _userRepositoryMock.Setup(r => r.GetByEmailAsync(dto.Email)).ReturnsAsync((User?)null);
+
+            _subscriptionServiceMock
+                .Setup(s => s.GetSubscriptionAsync(tenant.Id))
+                .ReturnsAsync(new SubscriptionCacheDto { PlanTier = "Free", MaxEmployees = 5, GitHubEnabled = false });
+
+            _userRepositoryMock
+                .Setup(r => r.GetEmployeeCountByTenantIdAsync(tenant.Id))
+                .ReturnsAsync(5);   // وصل للحد بالظبط
+
+            var act = async () => await _invitationService.InviteUserAsync(invitedByUserId, dto);
+
+            await act.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("*وصلت لحد الموظفين المسموح به*");
+
+            _invitationRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Invitation>()), Times.Never);
         }
     }
 }

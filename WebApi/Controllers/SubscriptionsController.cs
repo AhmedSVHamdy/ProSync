@@ -17,14 +17,21 @@ namespace WebApi.Controllers
         {
             _mediator = mediator;
         }
-
+        /// <summary>
+        /// Get the subscription details for the current tenant.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             var result = await _mediator.Send(new GetSubscriptionQuery { TenantId = GetCurrentTenantId() });
             return Ok(result);
         }
-
+        /// <summary>
+        /// Update the subscription details for the current tenant. Only users with the "Owner" role can perform this action.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize(Roles = "Owner")]   // فاكر ليه Owner بس؟ قرارات الفلوس والباقات بتاعة صاحب الشركة
         public async Task<IActionResult> Update([FromBody] UpdateSubscriptionCommand command)

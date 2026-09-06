@@ -9,5 +9,6 @@ namespace Core.ServiceContracts
     {
         Task NotifyTaskStatusChangedAsync(Guid projectId, TaskItemResponseDto task);
         Task NotifyTaskAssignedAsync(Guid projectId, TaskItemResponseDto task);
+        Task NotifyTaskEscalatedAsync(Guid projectId, Guid taskId, string taskTitle);
     }
 }

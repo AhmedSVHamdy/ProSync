@@ -21,6 +21,7 @@ namespace Core.Services
         private readonly IGoogleAuthValidator _googleAuthValidator;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IBackgroundJobService _backgroundJobService;
 
         public AuthService(
             IUserRepository userRepository,
@@ -31,7 +32,9 @@ namespace Core.Services
             IEmailService emailService,
             IGoogleAuthValidator googleAuthValidator,
             IConfiguration configuration,
-            IMapper mapper)
+            IMapper mapper,
+            IBackgroundJobService backgroundJobService
+            )
         {
             _userRepository = userRepository;
             _refreshTokenRepository = refreshTokenRepository;
@@ -42,6 +45,7 @@ namespace Core.Services
             _googleAuthValidator = googleAuthValidator;
             _configuration = configuration;
             _mapper = mapper;
+            _backgroundJobService = backgroundJobService;
         }
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
@@ -92,7 +96,7 @@ namespace Core.Services
             };
 
             await _userRepository.AddTenantWithOwnerAsync(tenant, user, userSettings, subscription);
-            BackgroundJob.Enqueue<IEmailService>(x => x.SendOtpEmailAsync(user.Email, rawOtp));
+            _backgroundJobService.Enqueue<IEmailService>(x => x.SendOtpEmailAsync(user.Email, rawOtp));
 
             return new AuthResponseDto
             {
@@ -195,7 +199,7 @@ namespace Core.Services
             user.OtpExpiresAt = DateTime.UtcNow.AddMinutes(5);
 
             await _userRepository.UpdateAsync(user);
-            BackgroundJob.Enqueue<IEmailService>(x => x.SendPasswordResetEmailAsync(user.Email, rawOtp)); ;
+            _backgroundJobService.Enqueue<IEmailService>(x => x.SendOtpEmailAsync(user.Email, rawOtp));
         }
 
         public async Task ResetPasswordAsync(ResetPasswordRequestDto dto)
@@ -242,7 +246,7 @@ namespace Core.Services
             user.OtpExpiresAt = DateTime.UtcNow.AddMinutes(5);
 
             await _userRepository.UpdateAsync(user);
-            BackgroundJob.Enqueue<IEmailService>(x => x.SendOtpEmailAsync(user.Email, rawOtp));
+            _backgroundJobService.Enqueue<IEmailService>(x => x.SendOtpEmailAsync(user.Email, rawOtp));
         }
 
         public async Task<UserProfileResponseDto> GetMeAsync(Guid userId)

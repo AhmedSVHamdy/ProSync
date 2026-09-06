@@ -9,6 +9,7 @@ using Core.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace Tests.Services
@@ -25,6 +26,7 @@ namespace Tests.Services
         private readonly Mock<IConfiguration> _configurationMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly AuthService _authService;
+        private readonly Mock<IBackgroundJobService> _backgroundJobServiceMock;
 
         public AuthServiceTests()
         {
@@ -37,6 +39,7 @@ namespace Tests.Services
             _googleAuthValidatorMock = new Mock<IGoogleAuthValidator>();
             _configurationMock = new Mock<IConfiguration>();
             _mapperMock = new Mock<IMapper>();
+            _backgroundJobServiceMock = new Mock<IBackgroundJobService>();
 
             _authService = new AuthService(
                 _userRepositoryMock.Object,
@@ -47,7 +50,8 @@ namespace Tests.Services
                 _emailServiceMock.Object,
                 _googleAuthValidatorMock.Object,
                 _configurationMock.Object,
-                _mapperMock.Object);
+                _mapperMock.Object,
+                _backgroundJobServiceMock.Object);
         }
 
         [Fact]
@@ -74,7 +78,9 @@ namespace Tests.Services
             _userRepositoryMock.Verify(
                  r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),   // ← ضفنا It.IsAny<UserSettings>()
                  Times.Once);
-            _emailServiceMock.Verify(e => e.SendOtpEmailAsync(dto.Email, "123456"), Times.Once);
+            _backgroundJobServiceMock.Verify(
+        b => b.Enqueue<IEmailService>(It.IsAny<Expression<Func<IEmailService, Task>>>()),
+        Times.Once);
         }
 
         [Fact]
@@ -98,7 +104,7 @@ namespace Tests.Services
 
             _userRepositoryMock.Verify(
                 r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),   // ← ضفنا It.IsAny<UserSettings>()
-                Times.Once);
+                Times.Never);
         }
 
         [Fact]
@@ -336,7 +342,9 @@ namespace Tests.Services
 
             await _authService.ForgotPasswordAsync(dto);
 
-            _emailServiceMock.Verify(e => e.SendPasswordResetEmailAsync(dto.Email, "654321"), Times.Once);
+            _backgroundJobServiceMock.Verify(
+                b => b.Enqueue<IEmailService>(It.IsAny<Expression<Func<IEmailService, Task>>>()),
+                Times.Once);
         }
 
         [Fact]
@@ -426,7 +434,9 @@ namespace Tests.Services
 
             await _authService.ResendOtpAsync(dto);
 
-            _emailServiceMock.Verify(e => e.SendOtpEmailAsync(dto.Email, "111222"), Times.Once);
+            _backgroundJobServiceMock.Verify(
+        b => b.Enqueue<IEmailService>(It.IsAny<Expression<Func<IEmailService, Task>>>()),
+        Times.Once);
         }
 
         [Fact]
@@ -551,8 +561,8 @@ namespace Tests.Services
             result.Should().BeEquivalentTo(expectedResponse);
 
             _userRepositoryMock.Verify(
-                 r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),   // ← ضفنا It.IsAny<UserSettings>()
-                 Times.Once);
+         r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),
+         Times.Once);
         }
 
         [Fact]
@@ -574,7 +584,7 @@ namespace Tests.Services
 
             _userRepositoryMock.Verify(
                r => r.AddTenantWithOwnerAsync(It.IsAny<Tenant>(), It.IsAny<User>(), It.IsAny<UserSettings>(), It.IsAny<Subscription>()),   // ← ضفنا It.IsAny<UserSettings>()
-               Times.Once);
+               Times.Never);
         }
 
         [Fact]

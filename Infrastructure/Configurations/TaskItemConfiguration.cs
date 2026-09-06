@@ -28,6 +28,10 @@ namespace Infrastructure.Configurations
                 .HasConversion<string>()
                 .IsRequired()
                 .HasMaxLength(50);
+            builder.Property(t => t.Priority)
+                .HasConversion<string>()
+                .IsRequired()
+                .HasMaxLength(50);
             builder.HasOne(t => t.Project)           
                 .WithMany()
                 .HasForeignKey(t => t.ProjectId)

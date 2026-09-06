@@ -34,6 +34,7 @@ namespace Core
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<ISlaEscalationService, SlaEscalationService>();
             services.AddScoped<IGitHubWebhookService, GitHubWebhookService>();
+            services.AddScoped<IBackgroundJobService, HangfireBackgroundJobService>();
 
             services.AddValidatorsFromAssemblyContaining<RegisterRequestDtoValidator>();
             services.AddAutoMapper(cfg => { }, typeof(AuthMappingProfile).Assembly);

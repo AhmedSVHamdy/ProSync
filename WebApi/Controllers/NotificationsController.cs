@@ -16,7 +16,7 @@ namespace WebApi.Controllers
             _notificationRepository = notificationRepository;
         }
         /// <summary>
-        /// Notifcation unread
+        /// Get unread notifications for the current user.
         /// </summary>
         /// <returns></returns>
         [HttpGet("unread")]
@@ -26,7 +26,7 @@ namespace WebApi.Controllers
             return Ok(result);
         }
         /// <summary>
-        /// Notifcation read
+        /// Mark a notification as read for the current user.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

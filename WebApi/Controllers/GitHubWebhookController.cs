@@ -17,7 +17,10 @@ namespace WebApi.Controllers
             _webhookService = webhookService;
             _configuration = configuration;
         }
-
+        /// <summary>
+        /// Handles incoming GitHub webhook events, verifies the signature, and processes pull request and pull request review events.
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> HandleWebhook()
         {

@@ -1,5 +1,6 @@
 ﻿using Core.Domain.Entities;
 using Core.Domain.RepositoryContracts;
+using Core.Enums;
 using Infrastructure.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -34,6 +35,26 @@ namespace Infrastructure.Repositories
                 .AsNoTracking()
                 .Where(t => t.SprintId == sprintId)
                 .ToListAsync();
+        }
+        public async Task<List<TaskItem>> GetOverdueCriticalTasksAsync(int hoursThreshold)
+        {
+            var cutoffTime = DateTime.UtcNow.AddHours(-hoursThreshold);
+
+            return await _dbSet
+                .IgnoreQueryFilters()   // ← الإضافة المهمة
+                .AsNoTracking()
+                .Where(t =>
+                    t.Priority == TaskPriority.Critical &&
+                    t.Status != Core.Enums.TaskStatus.Done &&
+                    t.LastActivityAt < cutoffTime)
+                .ToListAsync();
+        }
+
+        public async Task<TaskItem?> GetByPullRequestUrlAsync(string pullRequestUrl)
+        {
+            return await _dbSet
+                .IgnoreQueryFilters()   // ← فاكر ليه؟ نفس السبب بالظبط — الـ Webhook مش HTTP Request عادي فيه JWT، فمفيش Tenant Context
+                .FirstOrDefaultAsync(t => t.PullRequestUrl == pullRequestUrl);
         }
     }
 }

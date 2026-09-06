@@ -10,5 +10,7 @@ namespace Core.Domain.RepositoryContracts
         Task<TaskItem?> GetByIdWithAssigneeAsync(Guid id);
         Task<List<TaskItem>> GetByProjectIdWithAssigneeAsync(Guid projectId);
         Task<List<TaskItem>> GetBySprintIdAsync(Guid sprintId);   // اللي كانت Placeholder في CloseSprintCommandHandler
+        Task<List<TaskItem>> GetOverdueCriticalTasksAsync(int hoursThreshold);
+        Task<TaskItem?> GetByPullRequestUrlAsync(string pullRequestUrl);
     }
 }
