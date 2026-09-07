@@ -1,6 +1,7 @@
 ﻿using Core.Domain.Features.Projects.Commands.BreakdownProjectTasks;
 using Core.Domain.Features.Projects.Commands.Create_PullRequest;
 using Core.Domain.Features.Projects.Commands.CreateTaskItem;
+using Core.Domain.Features.Projects.Commands.ReassignTask;
 using Core.Domain.Features.Projects.Commands.UpdateTaskStatus;
 using Core.Domain.Features.Projects.Queries.GetProjectById;
 using Core.Domain.Features.Projects.Queries.GetTasks;
@@ -87,6 +88,21 @@ namespace WebApi.Controllers
         {
             command.TenantId = GetCurrentTenantId();
             command.RequestedByUserId = GetCurrentUserId();
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+        /// <summary>
+        /// Reassigns a task item to a new assignee.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut("{id}/reassign")]
+        [Authorize(Roles = "Owner,Admin")]
+        public async Task<IActionResult> Reassign(Guid id, [FromBody] ReassignTaskCommand command)
+        {
+            command.Id = id;
+            command.TenantId = GetCurrentTenantId();
             var result = await _mediator.Send(command);
             return Ok(result);
         }

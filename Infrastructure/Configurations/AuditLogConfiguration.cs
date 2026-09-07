@@ -26,6 +26,7 @@ namespace Infrastructure.Configurations
                 .IsRequired();
             builder.HasOne(a => a.User)
                 .WithMany()
+                .IsRequired(false)
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(a => a.TaskItem)

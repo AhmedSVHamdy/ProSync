@@ -48,7 +48,7 @@ namespace Infrastructure.Interceptors
                 {
                     Id = Guid.NewGuid(),
                     TenantId = tenantEntity.TenantId,
-                    UserId = currentUserId ?? Guid.Empty,   // فاكر ليه ممكن تكون فاضية؟ لو العملية جاية من Background Job (Hangfire/Webhook)
+                    UserId = currentUserId, 
                     Action = $"{action} {entry.Entity.GetType().Name}",
                     Timestamp = DateTime.UtcNow,
                     TaskItemId = entry.Entity is TaskItem task ? task.Id : null
