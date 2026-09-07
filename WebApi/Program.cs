@@ -93,6 +93,12 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+ 
+builder.Services.AddHealthChecks()
+    .AddSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!, name: "sql-server")
+    .AddRedis(builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379", name: "redis");
+
+
 builder.Services.AddHttpClient<IAiTaskBreakdownService, GeminiTaskBreakdownService>();
 builder.Services.AddOpenApi();
 var app = builder.Build();
@@ -109,6 +115,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHub<KanbanHub>("/SignalR/kanban");
+app.MapHealthChecks("/health");
 app.UseExceptionHandlingMiddleware();
 
 app.UseHttpsRedirection();

@@ -1,0 +1,648 @@
+## WORKSPACE EXECUTIVE SUMMARY (YAML)
+# Generated: 2026-09-06T22:47:21.1667959+03:00
+# Root: D:\Graduation Projcet\ProSync
+Architecture:
+  Type: Backend (C#/.NET)
+  Scale: 244 relevant source files
+  Components: 0
+  Controllers: 13
+  Models: 0
+  Services: 28
+---
+- File: Core\Core.csproj
+  Preview: "<Project Sdk='Microsoft.NET.Sdk'>  <PropertyGroup>   <TargetFramework>net10.0</TargetFramework>   <ImplicitUsings>enable</ImplicitUsings>   <Nullable>..."
+- File: Infrastructure\Infrastructure.csproj
+  Preview: "<Project Sdk='Microsoft.NET.Sdk'>  <PropertyGroup>   <TargetFramework>net10.0</TargetFramework>   <ImplicitUsings>enable</ImplicitUsings>   <Nullable>..."
+- File: UnitTest\UnitTest.csproj
+  Preview: "<Project Sdk='Microsoft.NET.Sdk'>  <PropertyGroup>   <TargetFramework>net10.0</TargetFramework>   <ImplicitUsings>enable</ImplicitUsings>   <Nullable>..."
+- File: WebApi\WebApi.csproj
+  Preview: "<Project Sdk='Microsoft.NET.Sdk.Web'>  <PropertyGroup>   <TargetFramework>net10.0</TargetFramework>   <Nullable>enable</Nullable>   <ImplicitUsings>en..."
+- File: LICENSE.txt
+  Preview: "MIT License Copyright (c) [year] [fullname] Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associat..."
+- File: ProSync.slnx
+  Preview: "<Solution>  <Project Path='Core/Core.csproj' />  <Project Path='Infrastructure/Infrastructure.csproj' />  <Project Path='UnitTest/UnitTest.csproj' /> ..."
+- File: README.md
+  Preview: "# ProSync"
+- File: Core\DependencyInjection.cs
+  Preview: "using Core.Domain.Features.Projects.Commands.CreateProject; using Core.Domain.RepositoryContracts; using Core.Mappers; using Core.ServiceContracts; us..."
+- File: Infrastructure\DependencyInjection.cs
+  Preview: "using Core.Domain.RepositoryContracts; using Core.ServiceContracts; using Core.Services; using Hangfire; using Infrastructure.ApplicationDbContext; us..."
+- File: WebApi\appsettings.Development.json
+  Preview: "{  'Logging': {   'LogLevel': {    'Default': 'Information',    'Microsoft.AspNetCore': 'Warning'   }  } } "
+- File: WebApi\appsettings.json
+  Preview: "{  'Logging': {   'LogLevel': {    'Default': 'Information',    'Microsoft.AspNetCore': 'Warning'   }  },  'AllowedHosts': '*'  } "
+- File: WebApi\Program.cs
+  Preview: "using Core; // 👈 1. ضيفنا دي عشان يشوف AddCoreServices using Core.ServiceContracts; using Core.Services; using FluentValidation.AspNetCore; using Han..."
+- File: Core\DTO\ConfirmedTaskItemDto.cs
+  Symbols: [ConfirmedTaskItemDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class ConfirmedTaskItemDto   {     public string Titl..."
+- File: Core\DTO\InviteUserRequestDto.cs
+  Symbols: [InviteUserRequestDto]
+  Preview: "using Core.Enums; using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class InviteUserRequestDto   {     ..."
+- File: Core\DTO\ProjectResponseDto.cs
+  Symbols: [ProjectResponseDto]
+  Preview: "using Core.Enums; using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {  public class ProjectResponseDto   {     pub..."
+- File: Core\DTO\SprintResponseDto.cs
+  Symbols: [SprintResponseDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class SprintResponseDto   {     public Guid Id { get;..."
+- File: Core\DTO\SprintSummaryDto.cs
+  Symbols: [SprintSummaryDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class SprintSummaryDto   {     public Guid SprintId {..."
+- File: Core\DTO\SubscriptionCacheDto.cs
+  Symbols: [SubscriptionCacheDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class SubscriptionCacheDto   {     public string Plan..."
+- File: Core\DTO\SubscriptionResponseDto.cs
+  Symbols: [SubscriptionResponseDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class SubscriptionResponseDto   {     public Guid Id ..."
+- File: Core\DTO\TaskBreakdownItemDto.cs
+  Symbols: [TaskBreakdownItemDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class TaskBreakdownItemDto   {     public string Titl..."
+- File: Core\DTO\TaskBreakdownPreviewDto.cs
+  Symbols: [TaskBreakdownPreviewDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class TaskBreakdownPreviewDto   {     public string T..."
+- File: Core\DTO\TaskItemResponseDto.cs
+  Symbols: [TaskItemResponseDto]
+  Preview: "using Core.Enums; using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class TaskItemResponseDto   {     p..."
+- File: Core\DTO\UserSettingsResponseDto.cs
+  Symbols: [UserSettingsResponseDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO {   public class UserSettingsResponseDto   {     public bool Ema..."
+- File: Core\Enums\AuditAction.cs
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Enums {   public enum AuditAction   {     Created = 1,     Updated =..."
+- File: Core\Enums\NotificationType.cs
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Enums {   public enum NotificationType   {     TaskAssigned = 1,    ..."
+- File: Core\Enums\PlanTier.cs
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Enums {   public enum PlanTier   {     Free = 1,     Pro = 2,     En..."
+- File: Core\Enums\ProjectStatus.cs
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Enums {   public enum ProjectStatus   {     Active = 1,     OnHold =..."
+- File: Core\Enums\TaskPriority.cs
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Enums {   public enum TaskPriority   {     Low = 1,     Medium = 2, ..."
+- File: Core\Enums\TaskStatus.cs
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Enums {   public enum TaskStatus   {     ToDo = 1,     InProgress = ..."
+- File: Core\Enums\UserRole.cs
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Enums {   public enum UserRole   {     Owner = 1,   // صاحب الـ Work..."
+- File: Core\Helpers\ClaimsPrincipalExtensions.cs
+  Symbols: [ClaimsPrincipalExtensions]
+  Preview: "using System; using System.Collections.Generic; using System.Security.Claims; using System.Text; namespace Core.Helpers {   public static class Claims..."
+- File: Core\Helpers\TokenHasher.cs
+  Symbols: [TokenHasher, HashDeterministic]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Helpers {   public static class TokenHasher   {     public static st..."
+- File: Core\Mappers\AdminMappingProfile.cs
+  Symbols: [AdminMappingProfile]
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.DTO.Authentication; using System; using System.Collections.Generic; using System.Text; namesp..."
+- File: Core\Mappers\AuthMappingProfile.cs
+  Symbols: [AuthMappingProfile]
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.DTO.Authentication; using System; using System.Collections.Generic; using System.Text; namesp..."
+- File: Core\Mappers\CoreMappingProfile.cs
+  Symbols: [ProjectMapp, CoreMappingProfile]
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.DTO; using System; using System.Collections.Generic; using System.Text; namespace Core.Mapper..."
+- File: Core\Mappers\InvitationMappingProfile.cs
+  Symbols: [InvitationMappingProfile]
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.DTO; using Core.DTO.Authentication; using System; using System.Collections.Generic; using Sys..."
+- File: Core\ServiceContracts\IAdminUserService.cs
+  Symbols: [IAdminUserService]
+  Preview: "using Core.DTO.Authentication; using Core.Enums; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts { ..."
+- File: Core\ServiceContracts\IAiTaskBreakdownService.cs
+  Symbols: [IAiTaskBreakdownService]
+  Preview: "using Core.DTO; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface IAiTaskBreakdo..."
+- File: Core\ServiceContracts\IAuthService.cs
+  Symbols: [IAuthService]
+  Preview: "using Core.DTO.Authentication; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface..."
+- File: Core\ServiceContracts\IBackgroundJobService.cs
+  Symbols: [IBackgroundJobService]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface IBackgroundJobService   {     ..."
+- File: Core\ServiceContracts\ICacheService.cs
+  Symbols: [ICacheService]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface ICacheService   {     Task<T?>..."
+- File: Core\ServiceContracts\IEmailService.cs
+  Symbols: [IEmailService]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface IEmailService   {     Task Sen..."
+- File: Core\ServiceContracts\IGitHubWebhookService.cs
+  Symbols: [IGitHubWebhookService]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface IGitHubWebhookService   {     ..."
+- File: Core\ServiceContracts\IGoogleAuthValidator.cs
+  Symbols: [IGoogleAuthValidator, Googl]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface IGoogleAuthValidator   {     T..."
+- File: Core\ServiceContracts\IInvitationService.cs
+  Symbols: [IInvitationService]
+  Preview: "using Core.DTO; using Core.DTO.Authentication; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   ..."
+- File: Core\ServiceContracts\INotificationService.cs
+  Symbols: [INotificationService]
+  Preview: "using Core.Enums; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface INotificatio..."
+- File: Core\ServiceContracts\IOtpService.cs
+  Symbols: [IOtpService]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface IOtpService   {     (string Ra..."
+- File: Core\ServiceContracts\IPasswordHasher.cs
+  Symbols: [IPasswordHasher]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   namespace Core.Application.Contracts.Services  ..."
+- File: Core\ServiceContracts\ISlaEscalationService.cs
+  Symbols: [ISlaEscalationService]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface ISlaEscalationService   {     ..."
+- File: Core\ServiceContracts\ISubscriptionService.cs
+  Symbols: [ISubscriptionService]
+  Preview: "using Core.DTO; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface ISubscriptionS..."
+- File: Core\ServiceContracts\ITaskNotifier.cs
+  Symbols: [ITaskNotifier]
+  Preview: "using Core.DTO; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   public interface ITaskNotifier ..."
+- File: Core\ServiceContracts\ITokenIssuerService.cs
+  Symbols: [ITokenIssuerService]
+  Preview: "using Core.Domain.Entities; using Core.DTO.Authentication; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceCo..."
+- File: Core\ServiceContracts\ITokenService.cs
+  Symbols: [ITokenService]
+  Preview: "using Core.Domain.Entities; using System; using System.Collections.Generic; using System.Text; namespace Core.ServiceContracts {   namespace Core.Appl..."
+- File: Core\Services\AdminUserService.cs
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO.Authentication; using Core.Enums; using Core.Servi..."
+- File: Core\Services\AuthService.cs
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO.Authentication; using Core.Enums; using Core.Servi..."
+- File: Core\Services\EmailService.cs
+  Preview: "using Core.ServiceContracts; using MailKit.Net.Smtp; using MailKit.Security; using Microsoft.Extensions.Configuration; using MimeKit; using System; us..."
+- File: Core\Services\GeminiTaskBreakdownService.cs
+  Preview: "using Core.DTO; using Core.ServiceContracts; using Microsoft.Extensions.Configuration; using System; using System.Collections.Generic; using System.Li..."
+- File: Core\Services\GitHubWebhookService.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using Core.ServiceContracts; using System; using System.Collections..."
+- File: Core\Services\GoogleAuthValidator.cs
+  Symbols: [GoogleAuthValidator]
+  Preview: "using Core.ServiceContracts; using Google.Apis.Auth; using Microsoft.Extensions.Configuration; using System; using System.Collections.Generic; using S..."
+- File: Core\Services\HangfireBackgroundJobService.cs
+  Symbols: [HangfireBackgroundJobService]
+  Preview: "using Core.ServiceContracts; using Hangfire; using System; using System.Collections.Generic; using System.Linq.Expressions; using System.Text; namespa..."
+- File: Core\Services\InvitationService.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using Core.DTO.Authentication; using Core.Helpers; using Core.Servi..."
+- File: Core\Services\NotificationService.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.Enums; using Core.ServiceContracts; using Hangfire; using System; using ..."
+- File: Core\Services\OtpService.cs
+  Symbols: [OtpService]
+  Preview: "using Core.ServiceContracts; using Org.BouncyCastle.Crypto.Generators; using System; using System.Collections.Generic; using System.Security.Cryptogra..."
+- File: Core\Services\PasswordHasher.cs
+  Symbols: [PasswordHasher]
+  Preview: "using Core.ServiceContracts.Core.Application.Contracts.Services; using Org.BouncyCastle.Crypto.Generators; using System; using System.Collections.Gene..."
+- File: Core\Services\RedisCacheService.cs
+  Symbols: [RedisCacheService]
+  Preview: "using Core.ServiceContracts; using Microsoft.Extensions.Caching.Distributed; using System; using System.Collections.Generic; using System.Text; using ..."
+- File: Core\Services\SlaEscalationService.cs
+  Symbols: [SlaEscalationService]
+  Preview: "using Core.Domain.RepositoryContracts; using Core.Enums; using Core.ServiceContracts; using System; using System.Collections.Generic; using System.Tex..."
+- File: Core\Services\SubscriptionService.cs
+  Symbols: [SubscriptionService]
+  Preview: "using Core.Domain.RepositoryContracts; using Core.DTO; using Core.ServiceContracts; using System; using System.Collections.Generic; using System.Text;..."
+- File: Core\Services\TokenIssuerService.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO.Authentication; using Core.ServiceContracts; using Core.ServiceContr..."
+- File: Core\Services\TokenService.cs
+  Preview: "using Core.Domain.Entities; using Core.ServiceContracts.Core.Application.Contracts.Services; using Microsoft.Extensions.Configuration; using Microsoft..."
+- File: Core\Validators\AcceptInvitationRequestDtoValidator.cs
+  Symbols: [AcceptInvitationRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\ChangePasswordRequestDtoValidator.cs
+  Symbols: [ChangePasswordRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\DeleteAccountRequestDtoValidator.cs
+  Symbols: [DeleteAccountRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\ForgotPasswordRequestDtoValidator.cs
+  Symbols: [ForgotPasswordRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\GoogleLoginRequestDtoValidator.cs
+  Symbols: [GoogleLoginRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\InviteUserRequestDtoValidator .cs
+  Symbols: [InviteUserRequestDtoValidator]
+  Preview: "using Core.DTO; using Core.Enums; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators..."
+- File: Core\Validators\LoginRequestDtoValidator.cs
+  Symbols: [LoginRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\RefreshTokenRequestDtoValidator.cs
+  Symbols: [RefreshTokenRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\RegisterRequestDtoValidator.cs
+  Symbols: [RegisterRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\ResendOtpRequestDtoValidator.cs
+  Symbols: [ResendOtpRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\ResetPasswordRequestDtoValidator.cs
+  Symbols: [ResetPasswordRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Core\Validators\VerifyOtpRequestDtoValidator.cs
+  Symbols: [VerifyOtpRequestDtoValidator]
+  Preview: "using Core.DTO.Authentication; using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Validators { ..."
+- File: Infrastructure\ApplicationDbContext\ProSyncContext.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using System; using System.Collections.Generic..."
+- File: Infrastructure\Configurations\AuditLogConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Configurations\InvitationConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.Builders; using System; using System.Col..."
+- File: Infrastructure\Configurations\NotificationConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Configurations\ProjectConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Configurations\RefreshTokenConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.Builders; using System; using System.Col..."
+- File: Infrastructure\Configurations\SprintConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Configurations\SubscriptionConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Configurations\TaskItemConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Configurations\TenantConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Configurations\TenantEntityConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.Features.Projects.Commands.MultiTenancy; using Core.Domain.RepositoryContracts; using Microsoft.EntityFr..."
+- File: Infrastructure\Configurations\UserConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Configurations\UserSettingsConfiguration.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.B..."
+- File: Infrastructure\Interceptors\AuditLogInterceptor.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.Features.Projects.Commands.MultiTenancy; using Core.Domain.RepositoryContracts; using Microsoft.EntityFr..."
+- File: Infrastructure\Migrations\20260811134832_InitialCreate.cs
+  Symbols: [InitialCreate]
+  Preview: "using System; using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public pa..."
+- File: Infrastructure\Migrations\20260811134832_InitialCreate.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260811194629_ChangeEmailIndexToGloballyUnique.cs
+  Symbols: [ChangeEmailIndexToGloballyUnique]
+  Preview: "using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public partial class Ch..."
+- File: Infrastructure\Migrations\20260811194629_ChangeEmailIndexToGloballyUnique.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260819073732_ChangeProjectStatus.cs
+  Symbols: [ChangeProjectStatus]
+  Preview: "using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public partial class Ch..."
+- File: Infrastructure\Migrations\20260819073732_ChangeProjectStatus.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260825130509_StatusTask.cs
+  Symbols: [StatusTask]
+  Preview: "using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public partial class St..."
+- File: Infrastructure\Migrations\20260825130509_StatusTask.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260827040821_AddStartdateinSubscirption.cs
+  Symbols: [AddStartdateinSubscirption]
+  Preview: "using System; using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public pa..."
+- File: Infrastructure\Migrations\20260827040821_AddStartdateinSubscirption.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260830194020_ChangeTaskPriority.cs
+  Symbols: [ChangeTaskPriority]
+  Preview: "using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public partial class Ch..."
+- File: Infrastructure\Migrations\20260830194020_ChangeTaskPriority.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260830202858_MakeAuditLog.cs
+  Symbols: [MakeAuditLog]
+  Preview: "using System; using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public pa..."
+- File: Infrastructure\Migrations\20260830202858_MakeAuditLog.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260831120451_AddUserSpecialty.cs
+  Symbols: [AddUserSpecialty]
+  Preview: "using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public partial class Ad..."
+- File: Infrastructure\Migrations\20260831120451_AddUserSpecialty.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260901033939_AddSpecialtyToInvitation.cs
+  Symbols: [AddSpecialtyToInvitation]
+  Preview: "using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public partial class Ad..."
+- File: Infrastructure\Migrations\20260901033939_AddSpecialtyToInvitation.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\20260906084217_MakeAuditLogUserIdNullable.cs
+  Symbols: [MakeAuditLogUserIdNullable]
+  Preview: "using System; using Microsoft.EntityFrameworkCore.Migrations; #nullable disable namespace Infrastructure.Migrations {   /// <inheritdoc />   public pa..."
+- File: Infrastructure\Migrations\20260906084217_MakeAuditLogUserIdNullable.Designer.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Migrations\ProSyncContextModelSnapshot.cs
+  Preview: "// <auto-generated /> using System; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCor..."
+- File: Infrastructure\Repositories\GenericRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.ServiceContracts; using Infrastructure.ApplicationDbContext; using Micro..."
+- File: Infrastructure\Repositories\InvitationRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; usi..."
+- File: Infrastructure\Repositories\NotificationRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; usi..."
+- File: Infrastructure\Repositories\ProjectRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; usi..."
+- File: Infrastructure\Repositories\RefreshTokenRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; usi..."
+- File: Infrastructure\Repositories\SprintRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; usi..."
+- File: Infrastructure\Repositories\SubscriptionRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; usi..."
+- File: Infrastructure\Repositories\TaskItemRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.Enums; using Infrastructure.ApplicationDbContext; using Microsoft.Entity..."
+- File: Infrastructure\Repositories\TenantProviderRepositories.cs
+  Symbols: [TenantProviderRepos]
+  Preview: "using Core.Domain.Features.Projects.Commands.MultiTenancy; using Core.Domain.RepositoryContracts; using System; using System.Collections.Generic; usin..."
+- File: Infrastructure\Repositories\UserRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.Enums; using Infrastructure.ApplicationDbContext; using Microsoft.Entity..."
+- File: Infrastructure\Repositories\UserSettingsRepository.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Infrastructure.ApplicationDbContext; using Microsoft.EntityFrameworkCore; usi..."
+- File: Infrastructure\SignalR\KanbanHub.cs
+  Preview: "using Microsoft.AspNetCore.Authorization; using Microsoft.AspNetCore.SignalR; using Microsoft.EntityFrameworkCore; using System; using System.Collecti..."
+- File: Infrastructure\SignalR\SignalRTaskNotifier.cs
+  Symbols: [SignalRTaskNotifier]
+  Preview: "using Core.DTO; using Core.ServiceContracts; using Microsoft.AspNetCore.SignalR; using System; using System.Collections.Generic; using System.Text; na..."
+- File: UnitTest\Integration\DatabaseFixture.cs
+  Preview: "using Infrastructure; using Infrastructure.ApplicationDbContext; using Infrastructure.Repositories; using Microsoft.EntityFrameworkCore; using System...."
+- File: UnitTest\Integration\MultiTenancyIsolationTests.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.Features.Projects.Commands.MultiTenancy; using Core.Enums; using FluentAssertions; using Microsoft.Entit..."
+- File: UnitTest\Services\AdminUserServiceTests.cs
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO.Authentication; using Core.Enums; using Core.Servi..."
+- File: UnitTest\Services\AuthServiceTests.cs
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using Core.DTO.Authentication; using Core.Service..."
+- File: UnitTest\Services\InvitationServiceTests.cs
+  Preview: "using AutoMapper; using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using Core.DTO.Authentication; using Core.Enums; ..."
+- File: UnitTest\Validators\ChangePasswordRequestDtoValidatorTests.cs
+  Symbols: [ChangePasswordRequ]
+  Preview: "using Core.DTO; using Core.DTO.Authentication; using Core.Validators; using FluentValidation.TestHelper; using System; using System.Collections.Generi..."
+- File: UnitTest\Validators\InviteUserRequestDtoValidatorTests.cs
+  Symbols: [InviteUserRequestDtoValidatorTe]
+  Preview: "using Core.DTO; using Core.Enums; using Core.Validators; using FluentValidation.TestHelper; using System; using System.Collections.Generic; using Syst..."
+- File: UnitTest\Validators\RegisterRequestDtoValidatorTests.cs
+  Symbols: [RegisterRequestDto]
+  Preview: "using Core.DTO; using Core.DTO.Authentication; using Core.Validators; using FluentValidation.TestHelper; using System; using System.Collections.Generi..."
+- File: WebApi\Controllers\AdminController.cs
+  Preview: "using Core.Domain.Entities; using Core.Enums; using Core.ServiceContracts; using Microsoft.AspNetCore.Authorization; using Microsoft.AspNetCore.Mvc; u..."
+- File: WebApi\Controllers\AiTasksController.cs
+  Preview: "using Core.Domain.Features.Projects.Commands.AiTasks.ConfirmBreakdown; using Core.Domain.Features.Projects.Commands.AiTasks.PreviewBreakdown; using Me..."
+- File: WebApi\Controllers\AuthController.cs
+  Preview: "using Core.DTO.Authentication; using Core.ServiceContracts; using Microsoft.AspNetCore.Authorization; using Microsoft.AspNetCore.Mvc; using System.Sec..."
+- File: WebApi\Controllers\BaseApiController.cs
+  Symbols: [GetCurrentUserId, BaseApiController]
+  Preview: "using Core.Domain.Entities; using Microsoft.AspNetCore.Mvc; using System.Security.Claims; namespace WebApi.Controllers {   public abstract class BaseA..."
+- File: WebApi\Controllers\FeatureTestController.cs
+  Symbols: [FeatureTestController]
+  Preview: "using Microsoft.AspNetCore.Authorization; using Microsoft.AspNetCore.Mvc; using WebApi.Filters; namespace WebApi.Controllers {     [ApiController]   [..."
+- File: WebApi\Controllers\GitHubWebhookController.cs
+  Symbols: [GitHubWebhookControll]
+  Preview: "using Core.ServiceContracts; using Microsoft.AspNetCore.Mvc; using System.Security.Cryptography; using System.Text; namespace WebApi.Controllers {   [..."
+- File: WebApi\Controllers\InvitationsController.cs
+  Preview: "using Core.Domain.Entities; using Core.DTO; using Core.DTO.Authentication; using Core.ServiceContracts; using Microsoft.AspNetCore.Authorization; usin..."
+- File: WebApi\Controllers\NotificationsController.cs
+  Preview: "using Core.Domain.RepositoryContracts; using Core.ServiceContracts; using Microsoft.AspNetCore.Authorization; using Microsoft.AspNetCore.Mvc; namespac..."
+- File: WebApi\Controllers\ProjectsController.cs
+  Preview: "using Core.Domain.Features.Projects.Commands.CreateProject; using Core.Domain.Features.Projects.Commands.DeleteProject; using Core.Domain.Features.Pro..."
+- File: WebApi\Controllers\SprintsController.cs
+  Preview: "using Core.Domain.Features.Projects.Commands.CloseSprint; using Core.Domain.Features.Projects.Commands.Create_Sprint; using Core.Domain.Features.Proje..."
+- File: WebApi\Controllers\SubscriptionsController.cs
+  Preview: "using Core.Domain.Features.Projects.Commands.UpdateSubscription; using Core.Domain.Features.Projects.Queries.GetSubscriptions; using MediatR; using Mi..."
+- File: WebApi\Controllers\TaskItemsController.cs
+  Preview: "using Core.Domain.Features.Projects.Commands.BreakdownProjectTasks; using Core.Domain.Features.Projects.Commands.Create_PullRequest; using Core.Domain..."
+- File: WebApi\Controllers\UserSettingsController.cs
+  Preview: "using Core.Domain.Features.Projects.Commands.UpdateUserSettings; using Core.Domain.RepositoryContracts; using Core.DTO; using Infrastructure.Repositor..."
+- File: WebApi\Filters\EnforceFeatureAttribute.cs
+  Symbols: [EnforceFeatureAttribute]
+  Preview: "using Microsoft.AspNetCore.Mvc; namespace WebApi.Filters {   public class EnforceFeatureAttribute : TypeFilterAttribute   {     public EnforceFeatureA..."
+- File: WebApi\Filters\EnforceFeatureFilter.cs
+  Symbols: [EnforceFeatureFilter]
+  Preview: "using Core.ServiceContracts; using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.Mvc.Filters; namespace WebApi.Filters {   public class Enforce..."
+- File: WebApi\Middlewares\ExceptionHandlingMiddleware.cs
+  Preview: "using Core.Domain.Features.Projects.Commands.MultiTenancy; using Core.Domain.RepositoryContracts; using Microsoft.AspNetCore.Builder; using Microsoft...."
+- File: WebApi\Properties\launchSettings.json
+  Preview: "{  'profiles': {   'http': {    'commandName': 'Project',    'launchBrowser': true,    'launchUrl': 'swagger',    'environmentVariables': {     'ASPNE..."
+- File: Core\Domain\Entities\AuditLog.cs
+  Symbols: [AuditLog]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class AuditLog : TenantEntity   {     pub..."
+- File: Core\Domain\Entities\BaseEntity.cs
+  Symbols: [BaseEntity]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class BaseEntity   {     public Guid Id {..."
+- File: Core\Domain\Entities\Invitation.cs
+  Symbols: [Invitation]
+  Preview: "using Core.Enums; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class Invitation : Tena..."
+- File: Core\Domain\Entities\Notification.cs
+  Symbols: [Notification]
+  Preview: "using Core.Enums; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class Notification :Ten..."
+- File: Core\Domain\Entities\Project.cs
+  Symbols: [Project]
+  Preview: "using Core.Enums; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class Project : TenantE..."
+- File: Core\Domain\Entities\RefreshToken.cs
+  Symbols: [RefreshToken]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class RefreshToken : BaseEntity   {     p..."
+- File: Core\Domain\Entities\Sprint.cs
+  Symbols: [Sprint]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class Sprint: TenantEntity   {     public..."
+- File: Core\Domain\Entities\Subscription.cs
+  Symbols: [Subscription]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class Subscription : TenantEntity   {    ..."
+- File: Core\Domain\Entities\TaskItem.cs
+  Symbols: [TaskItem]
+  Preview: "using Core.Enums; using System; using System.Collections.Generic; using System.Text; using TaskStatus = Core.Enums.TaskStatus; namespace Core.Domain.E..."
+- File: Core\Domain\Entities\Tenant.cs
+  Symbols: [Tenant]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class Tenant:BaseEntity   {     public st..."
+- File: Core\Domain\Entities\TenantEntity.cs
+  Symbols: [TenantEntity]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class TenantEntity :BaseEntity   {     pu..."
+- File: Core\Domain\Entities\User.cs
+  Symbols: [User]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class User : TenantEntity   {     public ..."
+- File: Core\Domain\Entities\UserSettings.cs
+  Symbols: [UserSettings]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Entities {   public class UserSettings : TenantEntity   {    ..."
+- File: Core\Domain\RepositoryContracts\IGenericRepository.cs
+  Symbols: [IGenericRepository]
+  Preview: "using Core.Domain.Entities; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.RepositoryContracts {   public in..."
+- File: Core\Domain\RepositoryContracts\IInvitationRepository.cs
+  Symbols: [IInvitationRepository]
+  Preview: "using Core.Domain.Entities; using Core.ServiceContracts; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Repo..."
+- File: Core\Domain\RepositoryContracts\INotificationRepository.cs
+  Symbols: [INotificationRepository]
+  Preview: "using Core.Domain.Entities; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.RepositoryContracts {   public in..."
+- File: Core\Domain\RepositoryContracts\IProjectRepository.cs
+  Symbols: [IProjectRepository]
+  Preview: "using Core.Domain.Entities; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.RepositoryContracts {   public in..."
+- File: Core\Domain\RepositoryContracts\IRefreshTokenRepository.cs
+  Symbols: [IRefreshTokenRepository]
+  Preview: "using Core.Domain.Entities; using Core.ServiceContracts; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Repo..."
+- File: Core\Domain\RepositoryContracts\ISprintRepository.cs
+  Symbols: [ISprintRepository]
+  Preview: "using Core.Domain.Entities; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.RepositoryContracts {   public in..."
+- File: Core\Domain\RepositoryContracts\ISubscriptionRepository.cs
+  Symbols: [ISubscriptionRepository]
+  Preview: "using Core.Domain.Entities; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.RepositoryContracts {   public in..."
+- File: Core\Domain\RepositoryContracts\ITaskItemRepository.cs
+  Symbols: [ITaskItemRepository]
+  Preview: "using Core.Domain.Entities; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.RepositoryContracts {   public in..."
+- File: Core\Domain\RepositoryContracts\ITenantProviderRepository.cs
+  Symbols: [ITenantProviderRepository]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.RepositoryContracts {   public interface ITenantProviderRepos..."
+- File: Core\Domain\RepositoryContracts\IUserRepository.cs
+  Symbols: [IUserRepository]
+  Preview: "using Core.Domain.Entities; using Core.ServiceContracts; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Repo..."
+- File: Core\Domain\RepositoryContracts\IUserSettingsRepository.cs
+  Symbols: [IUserSettingsRepository]
+  Preview: "using Core.Domain.Entities; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.RepositoryContracts {   public in..."
+- File: Core\DTO\Authentication\AcceptInvitationRequestDto.cs
+  Symbols: [AcceptInvitationRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class AcceptInvitationRequestDto   {  ..."
+- File: Core\DTO\Authentication\AdminActionResponse.cs
+  Symbols: [AdminActionResponse]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class AdminActionResponse   {     publ..."
+- File: Core\DTO\Authentication\AuthResponseDto.cs
+  Symbols: [AuthResponseDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class AuthResponseDto   {     public s..."
+- File: Core\DTO\Authentication\ChangePasswordRequestDto.cs
+  Symbols: [ChangePasswordRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class ChangePasswordRequestDto   {    ..."
+- File: Core\DTO\Authentication\DeleteAccountRequestDto.cs
+  Symbols: [DeleteAccountRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class DeleteAccountRequestDto   {     ..."
+- File: Core\DTO\Authentication\EmailSettings.cs
+  Symbols: [EmailSettings]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class EmailSettings   {     public str..."
+- File: Core\DTO\Authentication\ForgotPasswordRequestDto.cs
+  Symbols: [ForgotPasswordRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class ForgotPasswordRequestDto   {    ..."
+- File: Core\DTO\Authentication\GoogleLoginRequestDto.cs
+  Symbols: [GoogleLoginRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class GoogleLoginRequestDto   {     pu..."
+- File: Core\DTO\Authentication\LoginRequestDto.cs
+  Symbols: [LoginRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class LoginRequestDto   {     public s..."
+- File: Core\DTO\Authentication\RefreshTokenRequestDto.cs
+  Symbols: [RefreshTokenRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class RefreshTokenRequestDto   {     p..."
+- File: Core\DTO\Authentication\RegisterRequestDto.cs
+  Symbols: [RegisterRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class RegisterRequestDto   {     publi..."
+- File: Core\DTO\Authentication\ResendOtpRequestDto.cs
+  Symbols: [ResendOtpRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class ResendOtpRequestDto   {     publ..."
+- File: Core\DTO\Authentication\ResetPasswordRequestDto.cs
+  Symbols: [ResetPasswordRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class ResetPasswordRequestDto   {     ..."
+- File: Core\DTO\Authentication\UserProfileResponseDto.cs
+  Symbols: [UserProfileResponseDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class UserProfileResponseDto   {     p..."
+- File: Core\DTO\Authentication\VerifyOtpRequestDto.cs
+  Symbols: [VerifyOtpRequestDto]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.DTO.Authentication {   public class VerifyOtpRequestDto   {     publ..."
+- File: UnitTest\Handlers\TaskItems\AttachPullRequestCommandHandlerTests.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.Features.Projects.Commands.Create_PullRequest; using Core.Domain.Features.Projects.Commands.CreateTaskIt..."
+- File: UnitTest\Handlers\TaskItems\CreateTaskItemCommandHandlerTests.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.Features.Projects.Commands.CreateTaskItem; using Core.Domain.RepositoryContracts; using Core.Enums; usin..."
+- File: UnitTest\Handlers\TaskItems\UpdateTaskStatusCommandHandlerTests.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.Features.Projects.Commands.UpdateTaskStatus; using Core.Domain.RepositoryContracts; using Core.Enums; us..."
+- File: Core\Domain\Features\Projects\Commands\BreakdownProjectTasks\BreakdownProjectTasksCommand.cs
+  Symbols: [BreakdownProje]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serialization; namespace Core..."
+- File: Core\Domain\Features\Projects\Commands\BreakdownProjectTasks\BreakdownProjectTasksCommandHandler.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using Core.ServiceContracts; using MediatR; using System; using Sys..."
+- File: Core\Domain\Features\Projects\Commands\BreakdownProjectTasks\BreakdownProjectTasksCommandValidator.cs
+  Symbols: [BreakdownProjectTasksCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.BreakdownP..."
+- File: Core\Domain\Features\Projects\Commands\CloseSprint\CloseSprintCommand.cs
+  Symbols: [CloseSprintCommand]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.Clo..."
+- File: Core\Domain\Features\Projects\Commands\CloseSprint\CloseSprintCommandHandler.cs
+  Symbols: [CloseSprintCommandHandl]
+  Preview: "using Core.Domain.RepositoryContracts; using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Cor..."
+- File: Core\Domain\Features\Projects\Commands\Create PullRequest\AttachPullRequestCommand.cs
+  Symbols: [AttachPullRequestCommand]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.Cre..."
+- File: Core\Domain\Features\Projects\Commands\Create PullRequest\AttachPullRequestCommandHandler.cs
+  Preview: "using Core.Domain.RepositoryContracts; using Core.DTO; using Core.Enums; using Core.ServiceContracts; using MediatR; using System; using System.Collec..."
+- File: Core\Domain\Features\Projects\Commands\Create PullRequest\AttachPullRequestCommandValidator.cs
+  Symbols: [AttachPullRequestCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.Create_Pul..."
+- File: Core\Domain\Features\Projects\Commands\Create Sprint\CreateSprintCommand.cs
+  Symbols: [CreateSprintCommand]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serialization; namespace Core..."
+- File: Core\Domain\Features\Projects\Commands\Create Sprint\CreateSprintCommandHandler.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using MediatR; using System; using System.Collections.Generic; usin..."
+- File: Core\Domain\Features\Projects\Commands\Create Sprint\CreateSprintCommandValidator.cs
+  Symbols: [CreateSprintCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.Create_Spr..."
+- File: Core\Domain\Features\Projects\Commands\CreateProject\CreateProjectCommand.cs
+  Symbols: [CreateProjectCommand]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serialization; namespace Core..."
+- File: Core\Domain\Features\Projects\Commands\CreateProject\CreateProjectCommandHandler.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using Core.Enums; using MediatR; using System; using System.Collect..."
+- File: Core\Domain\Features\Projects\Commands\CreateProject\CreateProjectCommandValidator.cs
+  Symbols: [CreateProjectCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.CreateProj..."
+- File: Core\Domain\Features\Projects\Commands\CreateTaskItem\CreateTaskItemCommand.cs
+  Symbols: [Cr]
+  Preview: "using Core.DTO; using Core.Enums; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serializati..."
+- File: Core\Domain\Features\Projects\Commands\CreateTaskItem\CreateTaskItemCommandHandler.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using MediatR; using System; using System.Collections.Generic; usin..."
+- File: Core\Domain\Features\Projects\Commands\CreateTaskItem\CreateTaskItemCommandValidator.cs
+  Symbols: [CreateTaskItemCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.CreateTask..."
+- File: Core\Domain\Features\Projects\Commands\DeleteProject\DeleteProjectCommand.cs
+  Symbols: [DeleteProjectCommand]
+  Preview: "using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.DeleteProject {   p..."
+- File: Core\Domain\Features\Projects\Commands\DeleteProject\DeleteProjectCommandHandler.cs
+  Symbols: [DeleteProjectComman]
+  Preview: "using Core.Domain.RepositoryContracts; using Core.Enums; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace C..."
+- File: Core\Domain\Features\Projects\Commands\MultiTenancy\TenantProviderAccessor.cs
+  Symbols: [TenantProviderAccessor]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.MultiTenancy {   public static cla..."
+- File: Core\Domain\Features\Projects\Commands\ReassignTask\ReassignTaskCommand.cs
+  Symbols: [ReassignTaskCommand]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serialization; namespace Core..."
+- File: Core\Domain\Features\Projects\Commands\ReassignTask\ReassignTaskCommandHandler.cs
+  Preview: "using Core.Domain.RepositoryContracts; using Core.DTO; using Core.ServiceContracts; using MediatR; using System; using System.Collections.Generic; usi..."
+- File: Core\Domain\Features\Projects\Commands\ReassignTask\ReassignTaskCommandValidator.cs
+  Symbols: [ReassignTaskCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.ReassignTa..."
+- File: Core\Domain\Features\Projects\Commands\UpdateProject\UpdateProjectCommand.cs
+  Symbols: [UpdateProjectCommand]
+  Preview: "using Core.DTO; using Core.Enums; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Pro..."
+- File: Core\Domain\Features\Projects\Commands\UpdateProject\UpdateProjectCommandHandler.cs
+  Symbols: [UpdateProjectCommandH]
+  Preview: "using Core.Domain.RepositoryContracts; using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Cor..."
+- File: Core\Domain\Features\Projects\Commands\UpdateProject\UpdateProjectCommandValidator.cs
+  Symbols: [UpdateProjectCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.UpdateProj..."
+- File: Core\Domain\Features\Projects\Commands\UpdateSubscription\UpdateSubscriptionCommand.cs
+  Preview: "using Core.DTO; using Core.Enums; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serializati..."
+- File: Core\Domain\Features\Projects\Commands\UpdateSubscription\UpdateSubscriptionCommandHandler.cs
+  Preview: "using Core.Domain.RepositoryContracts; using Core.DTO; using Core.ServiceContracts; using MediatR; using System; using System.Collections.Generic; usi..."
+- File: Core\Domain\Features\Projects\Commands\UpdateSubscription\UpdateSubscriptionCommandValidator.cs
+  Symbols: [UpdateSubscriptionCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.UpdateSubs..."
+- File: Core\Domain\Features\Projects\Commands\UpdateTaskStatus\UpdateTaskStatusCommand.cs
+  Symbols: [UpdateTaskStatusCom]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serialization; namespace Core..."
+- File: Core\Domain\Features\Projects\Commands\UpdateTaskStatus\UpdateTaskStatusCommandHandler.cs
+  Preview: "using Core.Domain.RepositoryContracts; using Core.DTO; using Core.Enums; using Core.ServiceContracts; using MediatR; using System; using System.Collec..."
+- File: Core\Domain\Features\Projects\Commands\UpdateTaskStatus\UpdateTaskStatusCommandValidator.cs
+  Symbols: [UpdateTaskStatusCommandValidator]
+  Preview: "using FluentValidation; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.UpdateTask..."
+- File: Core\Domain\Features\Projects\Commands\UpdateUserSettings\UpdateSpecialtyCommand.cs
+  Symbols: [UpdateSpecialtyCommand]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.UpdateUserSettings {   public clas..."
+- File: Core\Domain\Features\Projects\Commands\UpdateUserSettings\UpdateUserSettingsCommand.cs
+  Symbols: [UpdateUserSettingsCommand]
+  Preview: "using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Commands.UpdateUserSettings {   public clas..."
+- File: Core\Domain\Features\Projects\Queries\GetProjects\GetAllProjectsQuery.cs
+  Symbols: [GetAllProjectsQuery]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Queries.GetA..."
+- File: Core\Domain\Features\Projects\Queries\GetProjects\GetAllProjectsQueryHandler.cs
+  Symbols: [Ge]
+  Preview: "using AutoMapper; using Core.Domain.RepositoryContracts; using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.T..."
+- File: Core\Domain\Features\Projects\Queries\GetProjects\GetProjectByIdQuery.cs
+  Symbols: [GetProjectByIdQuery]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Queries.GetP..."
+- File: Core\Domain\Features\Projects\Queries\GetProjects\GetProjectByIdQueryHandler.cs
+  Symbols: [GetPr]
+  Preview: "using AutoMapper; using Core.Domain.RepositoryContracts; using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.T..."
+- File: Core\Domain\Features\Projects\Queries\GetSprints\GetSprintsByProjectQuery.cs
+  Symbols: [GetSprintsByProjectQuery]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Queries.GetP..."
+- File: Core\Domain\Features\Projects\Queries\GetSprints\GetSprintsByProjectQueryHandler.cs
+  Symbols: [Ge]
+  Preview: "using AutoMapper; using Core.Domain.RepositoryContracts; using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.T..."
+- File: Core\Domain\Features\Projects\Queries\GetSubscriptions\GetSubscriptionQuery.cs
+  Symbols: [GetSubscriptionQuery]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Queries.GetS..."
+- File: Core\Domain\Features\Projects\Queries\GetSubscriptions\GetSubscriptionQueryHandler.cs
+  Symbols: [GetSubscriptionQueryHandler]
+  Preview: "using Core.DTO; using Core.ServiceContracts; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.F..."
+- File: Core\Domain\Features\Projects\Queries\GetTasks\GetTasksByProjectQuery.cs
+  Symbols: [GetTasksByProjectQuery]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; namespace Core.Domain.Features.Projects.Queries.GetT..."
+- File: Core\Domain\Features\Projects\Queries\GetTasks\GetTasksByProjectQueryHandler.cs
+  Symbols: [GetTasks]
+  Preview: "using AutoMapper; using Core.Domain.RepositoryContracts; using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.T..."
+- File: Core\Domain\Features\Projects\Commands\AiTasks\ConfirmBreakdown\ConfirmBreakdownCommand.cs
+  Symbols: [ConfirmBrea]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serialization; namespace Core..."
+- File: Core\Domain\Features\Projects\Commands\AiTasks\ConfirmBreakdown\ConfirmBreakdownCommandHandler.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using Core.ServiceContracts; using MediatR; using System; using Sys..."
+- File: Core\Domain\Features\Projects\Commands\AiTasks\PreviewBreakdown\PreviewBreakdownCommand.cs
+  Symbols: [PreviewBrea]
+  Preview: "using Core.DTO; using MediatR; using System; using System.Collections.Generic; using System.Text; using System.Text.Json.Serialization; namespace Core..."
+- File: Core\Domain\Features\Projects\Commands\AiTasks\PreviewBreakdown\PreviewBreakdownCommandHandler.cs
+  Preview: "using Core.Domain.Entities; using Core.Domain.RepositoryContracts; using Core.DTO; using Core.ServiceContracts; using MediatR; using System; using Sys..."
